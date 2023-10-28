@@ -129,12 +129,6 @@ def SinglePython_shell():
 			print(err)
 
 
-import contextlib
-
-with contextlib.suppress(Exception):
-	optreadfile()
-
-
 def SinglePython_cmd():
 	global runpath
 	runpath = os.path.dirname(os.path.realpath(sys.argv[0]))
@@ -171,7 +165,6 @@ helpinfo = """
 用法: SinglePython [OPTIONS]
 
 Options:
-<filename>    --file=<filename>    运行文件
 -f            --file               输入 Python 文件名并运行 （*.py），但此选项无运行完成提示
 -h            --help               查看帮助
 -v            --version            查看SinglePython版本
