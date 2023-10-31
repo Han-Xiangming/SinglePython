@@ -127,7 +127,7 @@ def SinglePython_shell():
 					errorinfo = os.system('cls' if os.name == 'nt' else 'clear')
 					SinglePython_welcome_text()
 				elif 'py' in user_input:
-					user_input = str(user_input).replace('"','')
+					user_input = str(user_input).replace('"', '')
 					optreadfile_exec(user_input)
 					continue
 
