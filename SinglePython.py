@@ -95,8 +95,8 @@ def optreadfile_exec(filename):
 		print("SinglePython Error: File not found")
 
 
-# 定义 SinglePython_welcome_text 函数，用于显示欢迎信息
-def SinglePython_welcome_text():
+# 定义 show_startup_info 函数，用于显示欢迎信息
+def show_startup_info():
 	# 打印 SinglePython 版本，Python 版本和运行环境等信息
 	print(
 		f"SinglePython {ver}-{releases_ver} (Python Version:{platform.python_version()}) [Running on {platform.platform()} {platform.version()}]"
@@ -135,7 +135,7 @@ def SinglePython_shell():
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
 					errorinfo = os.system('cls' if os.name == 'nt' else 'clear')
-					SinglePython_welcome_text()
+					show_startup_info()
 					continue
 				# 如果用户输入中含有 ".py"，尝试执行指定的文件
 				elif '.py' in user_input:
@@ -222,7 +222,7 @@ try:
 	# -f 对应 --file=，后面可以接一个文件名作为参数
 	# -v 对应 --version，用于显示版本信息
 	opts, args = getopt.getopt(sys.argv[1:], '-h:-f:-v',
-	                           ['help', 'file=', 'version'])
+							   ['help', 'file=', 'version'])
 # 处理可能出现的 getopt 错误
 except getopt.GetoptError as err:
 	# 输出帮助信息
@@ -262,12 +262,10 @@ for opt_name, opt_value in opts:
 
 try:
 	# 显示欢迎文本
-	SinglePython_welcome_text()
-	# 打开 startupfile.conf 文件，并以 UTF-8 编码读取其内容
-	with open("startupfile.conf", encoding="utf-8") as filename:
-		startupcode = filename.read()
-	# 执行文件中的代码
-	exec(startupcode)
-except Exception:
-	# 如果发生任何异常，则直接进入 SinglePython_shell 主界面
+	show_startup_info()
+	# 直接进入 SinglePython_shell 主界面
 	SinglePython_shell()
+except Exception:
+	# 如果发生任何异常，打印错误信息并退出程序
+	print("An error occurred:", sys.exc_info()[0])
+	sys.exit(1)
