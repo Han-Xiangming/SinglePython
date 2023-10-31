@@ -67,7 +67,7 @@ except ImportError:
 
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os, cmd, random 和 requests
 try:
-	import getopt
+	from getopt import getopt, GetoptError
 	import sys
 	import platform
 	import os
@@ -175,22 +175,20 @@ def SinglePython_cmd():
 		os.chdir(f"{runpath}/SinglePython_files/cmd")
 	except Exception:
 		while True:
-			# 循环提示用户输入命令，如果用户输入 exit，则退出程序；如果用户输入 shell，则跳出循环
+			# 循环提示用户输入命令，如果用户输入 exit，则退出程序；
 			initcmd = input("(InstallationENV) ")
 			if initcmd == 'exit':
 				exit()
-			if initcmd == 'shell':
-				break
 	try:
 		global cmd_username
 		# 打开文件 "{runpath}/SinglePython_files/userdata/defaultloginuser" 并读取内容，将读取的内容赋值给全局变量 cmd_username
-		default_profile = open(
-			f"{runpath}/SinglePython_files/userdata/defaultloginuser", "r"
-		)
-		cmd_username = default_profile.read()
-		# 进入 "{runpath}/SinglePython_files/userdata/home/{cmd_username}" 目录
-		os.chdir(f"{runpath}/SinglePython_files/userdata/home/{cmd_username}")
-	except Exception:
+		with open(
+				f"{runpath}/SinglePython_files/userdata/defaultloginuser", "r"
+		) as f:
+			cmd_username = f.read().strip()
+		# 创建用户的主目录，如果目录已存在则不报错
+		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{cmd_username}", exist_ok=True)
+	except FileNotFoundError:
 		# 如果尝试进入用户主目录时出现异常，则将全局变量 cmd_username 赋值为 'user'
 		cmd_username = 'user'
 		# 输出错误信息：无法切换到 SinglePython 用户配置文件，因为找不到默认用户。要使用临时目录用户，请使用“adduser”和“setdefaultuser<username>”创建用户并设置默认用户
@@ -198,9 +196,9 @@ def SinglePython_cmd():
 			'无法切换到 SinglePython 用户配置文件：找不到默认用户。要使用临时目录用户，请使用“adduser”和“setdefaultuser<username>”创建用户并设置默认用户')
 	try:
 		# 打开文件 "{runpath}/SinglePython_files/hostname/hostname" 并读取内容，将读取的内容赋值给全局变量 cmd_hostname
-		get_hostname = open(f"{runpath}/SinglePython_files/hostname/hostname", "r")
-		cmd_hostname = get_hostname.read()
-	except Exception:
+		with open(f"{runpath}/SinglePython_files/hostname/hostname", "r") as f:
+			cmd_hostname = f.read().strip()
+	except FileNotFoundError:
 		# 如果尝试获取主机名时出现异常，则将全局变量 cmd_hostname 赋值为 'SinglePython'
 		cmd_hostname = "SinglePython"
 
@@ -215,50 +213,53 @@ Options:
 -v | --version  显示 SinglePython 版本信息
 """
 
+
+# 定义函数handle_option，用于处理命令行选项
+def handle_option(opt_name):
+	# 检查是否是帮助信息选项
+	if opt_name in ('-h', '--help'):
+		# 打印帮助信息并退出程序
+		print(helpinfo)
+		sys.exit(0)
+	# 检查是否是版本信息选项
+	elif opt_name in ('-v', '--version'):
+		# 打印版本信息并退出程序
+		print(f"SinglePython {ver}-{releases_ver}, powered by Python {platform.python_version()}")
+		sys.exit(0)
+	# 检查是否是指定文件执行选项
+	elif opt_name in ('-f', '--file'):
+		# 获取指定的文件路径
+		file = opt_value if opt_value is not None else ''
+		try:
+			# 读取文件内容并执行
+			exec(open(file).read())
+		except Exception as e:
+			# 如果执行过程中出现异常，则打印错误信息并退出程序
+			print(f"Error executing code from {file}: {e}")
+		finally:
+			# 无论是否出现异常，都要退出程序
+			sys.exit()
+
+
 # 使用 getopt 库处理命令行参数
 try:
 	# 设置可选参数及其对应的短选项和长选项：
 	# -h 对应 --help，用于显示帮助信息
 	# -f 对应 --file=，后面可以接一个文件名作为参数
 	# -v 对应 --version，用于显示版本信息
-	opts, args = getopt.getopt(sys.argv[1:], '-h:-f:-v',
-							   ['help', 'file=', 'version'])
+	opts, args = getopt(sys.argv[1:], '-hf:-v',
+	                    ['help', 'file=', 'version'])
+	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
+	for opt_name, opt_value in opts:
+		handle_option(opt_name)
 # 处理可能出现的 getopt 错误
-except getopt.GetoptError as err:
-	# 输出帮助信息
-	print("请查看帮助：")
+except GetoptError as err:
 	# 输出错误信息：您使用的参数不存在或未完全输入，请查看帮助!!!
-	print("您使用的参数不存在或未完全输入，请查看帮助!!!")
+	print(f"参数错误: {str(err)}")
 	# 输出帮助信息
 	print(helpinfo)
 	# 退出程序
-	sys.exit()
-# 处理每个选项
-for opt_name, opt_value in opts:
-	# 如果选项是 "-h" 或 "--help"，则显示完整帮助信息并退出程序
-	if opt_name in ('-h', '--help'):
-		# -h 显示完整帮助功能
-		print(helpinfo)
-		sys.exit()
-	# 如果选项是 "-v" 或 "--version"，则显示版本信息并退出程序
-	if opt_name in ('-v', '--version'):
-		# -v 显示版本
-		print(f"SinglePython {ver}-{releases_ver}")
-		print(f"Python {platform.python_version()}")
-		sys.exit()
-	# 如果选项是 "-f" 或 "--file"，则运行指定的文件
-	if opt_name in ('-f', '--file'):
-		# 获取选项后面的文件名
-		file = opt_value
-		# 打开文件，并以 UTF-8 编码读取其内容
-		with open(file, encoding="utf-8") as f:
-			code = f.read()
-			# 编译代码，得到编译后的对象
-			compiled_code = compile(code, file, "exec")
-			# 执行编译后的代码
-			exec(compiled_code)
-		# 退出程序
-		sys.exit()
+	sys.exit(2)  # 参数错误时，程序异常结束，返回值为2
 
 try:
 	# 显示欢迎文本
