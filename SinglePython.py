@@ -68,14 +68,25 @@ except Exception:
 	sys.exit()
 
 
+# 运行 Python 文件
+def optreadfile(filename):
+	try:
+		with open(filename, "r") as f:
+			return f.read()
+	except Exception:
+		print("SinglePython Error: File not found")
+		sys.exit()
+
+
 # 运行 Python 文件选项（-f）
-def optreadfile():
-	getfile = sys.argv[1]
-	with open(getfile, encoding="utf-8") as f:
-		code = f.read()
-		compiled_code = compile(code, file, "exec")
-		exec(compiled_code)
-	sys.exit(0)
+def optreadfile_exec(filename):
+	try:
+		with open(filename, "r") as f:
+			exec(f.read())
+		print(" ")
+		print("Run Python file successfully")
+	except Exception:
+		print("SinglePython Error: File not found")
 
 
 # Main
@@ -115,6 +126,11 @@ def SinglePython_shell():
 				elif user_input in ('cls', 'clear'):
 					errorinfo = os.system('cls' if os.name == 'nt' else 'clear')
 					SinglePython_welcome_text()
+				elif 'py' in user_input:
+					user_input = str(user_input).replace('"','')
+					optreadfile_exec(user_input)
+					continue
+
 				if not multiline_input:
 					try:
 						exec(input_buffer)
