@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <div align=center><img src="Icon.ico" width="  "></div>
 <h1 align="center" name="binpython">SinglePython</h1>
 <p align="center">
@@ -33,5 +34,5 @@ cd binpython
 pip install -r .\requirement.txt
 ```
 3. 构建 SinglePython
-   运行build.bat即可
+   <br/>运行build.bat即可
 
