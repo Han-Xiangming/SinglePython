@@ -28,9 +28,9 @@ Options:
 git clone https://github.com/Han-Xiangming/SinglePython
 cd binpython
 ```
-2. 安装Python，Pyinstaller
+2. 安装依赖
 ```bash
-pip install pyinstaller
+pip install -r .\requirement.txt
 ```
 3. 构建 SinglePython
    运行build.bat即可
