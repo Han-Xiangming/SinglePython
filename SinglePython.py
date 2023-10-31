@@ -1,5 +1,5 @@
 # SinglePtyhon
-ver = "0.51"
+ver = "0.52"
 
 libs_warning = "1"
 # 1 is ture 0 is false.
