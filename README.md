@@ -31,7 +31,7 @@ Options:
 
 ```bash
 git clone https://github.com/Han-Xiangming/SinglePython
-cd binpython
+cd SinglePython
 ```
 
 2. 安装依赖
