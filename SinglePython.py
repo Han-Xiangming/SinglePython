@@ -143,7 +143,11 @@ def SinglePython_shell():
 					sys.exit()
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
-					errorinfo = os.system('cls' if os.name == 'nt' else 'clear')
+					def cls():
+						pass
+					def clear():
+						pass
+					os.system('cls' if os.name == 'nt' else 'clear')
 					show_startup_info()
 					continue
 				# 如果用户输入中含有 ".py"，尝试执行指定的文件
