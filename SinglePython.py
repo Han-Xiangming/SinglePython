@@ -9,33 +9,55 @@ releases_ver = "official"
 importlibs = "os"
 
 
-# SinglePythonInfo 类用于获取SinglePython的相关信息
-class SinglePythoninfo:
-	# ver 方法用于打印 SinglePython 的版本号
+class SinglePythonInfo:
+	def __init__(self, ver, libs_warning, releases_ver, importlibs):
+		"""
+		SinglePythonInfo类构造函数
+
+		参数:
+		- ver: str, Python版本号
+		- libs_warning: list, 包含警告的库列表
+		- releases_ver: str, 发布的版本号
+		- importlibs: list, 导入的库列表
+		"""
+		self.ver = ver
+		self.libs_warning = libs_warning
+		self.releases_ver = releases_ver
+		self.build_importlibs = importlibs
+
+
 	def ver(self):
-		print(ver)
+		print(self.ver)
 
-	# libs_warning 方法用于打印是否开启库不存在的提示
 	def libs_warning(self):
-		print(libs_warning)
+		print(self.libs_warning)
 
-	# releases_ver 方法用于打印发布版本信息
 	def releases_ver(self):
-		print(releases_ver)
+		print(self.releases_ver)
 
-	# build_importlibs 方法用于打印已导入库
 	def build_importlibs(self):
-		print(importlibs)
+		print(self.build_importlibs)
 
 
-# 导入平台模块
-import platform
+
+# 尝试基础导入所需模块，包括 getopt, sys, platform, os
+try:
+	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 异常
+	import sys  # 导入 sys 模块
+	import platform  # 导入 platform 模块
+	import os  # 导入 os 模块
+# 如果发生异常
+except Exception:
+	# 输出错误信息，并退出程序
+	print("SinglePython Error: Import Error")  # 打印错误信息
+	sys.exit()  # 退出程序
+
 
 # 获取操作系统类型
-sys = platform.system()
+sysinfo = platform.system()
 
 # 如果是 Windows 系统，则定义 SinglePythonWin 类，用于设置控制台标题
-if sys == "Windows":
+if sysinfo == "Windows":
 	class SinglePythonwin:
 		# set_console_title 方法用于设置控制台标题
 		def set_console_title(self):
@@ -65,23 +87,9 @@ except ImportError:
 		print(f"Warning: 自定义导入库 {importlibs} 不存在，请检查源代码库配置并重新构建")
 		print("")
 
-# 尝试基础导入所需模块，包括 getopt, sys, platform, os, cmd, random 和 requests
-try:
-	from getopt import getopt, GetoptError
-	import sys
-	import platform
-	import os
-	import cmd
-	import random
-	import requests
-# 如果发生异常
-except Exception:
-	# 输出错误信息，并退出程序
-	print("SinglePython Error: Import Error")
-	sys.exit()
 
 
-# # 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
+# 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
 def optreadfile_exec(filename):
 	# 尝试打开文件并执行其中的 Python 代码
 	try:
@@ -89,10 +97,11 @@ def optreadfile_exec(filename):
 			exec(f.read())
 		print(" ")
 		print("Run Python file successfully")
-	# 如果出现异常
-	except Exception:
+		# 如果出现异常
+	except FileNotFoundError:
 		# 输出错误信息
-		print("SinglePython Error: File not found")
+		print("SinglePython Error: 文件未找到")
+
 
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
@@ -248,7 +257,7 @@ try:
 	# -f 对应 --file=，后面可以接一个文件名作为参数
 	# -v 对应 --version，用于显示版本信息
 	opts, args = getopt(sys.argv[1:], '-hf:-v',
-	                    ['help', 'file=', 'version'])
+						['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
 		handle_option(opt_name)
