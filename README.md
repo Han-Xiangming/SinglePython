@@ -20,7 +20,7 @@
 用法: SinglePython [OPTIONS]
 
 Options:
--f <filename> --file=<filename>    输入 Python 文件名并运行 （*.py），但此选项无运行完成提示
+-f <filename> --file=<filename>    输入 Python 文件名并运行 （*.py）
 -h            --help               查看帮助
 -v            --version            查看SinglePython版本
 ```
