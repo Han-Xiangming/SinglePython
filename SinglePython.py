@@ -103,8 +103,7 @@ def optreadfile_exec(filename):
 def show_startup_info():
 	# 打印 SinglePython 版本，Python 版本和运行环境等信息
 	print(
-		f"SinglePython {ver}-{releases_ver} (Python Version:{platform.python_version()}) [Running on {platform.platform()} {platform.version()}]"
-	)
+		f"SinglePython {ver}-{releases_ver} (Python Version:{platform.python_version()}) [Running on {platform.platform()} {platform.version()}]")
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
@@ -192,9 +191,7 @@ def SinglePython_cmd():
 	try:
 		global cmd_username
 		# 打开文件 "{runpath}/SinglePython_files/userdata/defaultloginuser" 并读取内容，将读取的内容赋值给全局变量 cmd_username
-		with open(
-				f"{runpath}/SinglePython_files/userdata/defaultloginuser", "r"
-		) as f:
+		with open(f"{runpath}/SinglePython_files/userdata/defaultloginuser", "r") as f:
 			cmd_username = f.read().strip()
 		# 创建用户的主目录，如果目录已存在则不报错
 		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{cmd_username}", exist_ok=True)
@@ -257,8 +254,7 @@ try:
 	# -h 对应 --help，用于显示帮助信息
 	# -f 对应 --file=，后面可以接一个文件名作为参数
 	# -v 对应 --version，用于显示版本信息
-	opts, args = getopt(sys.argv[1:], '-hf:-v',
-	                    ['help', 'file=', 'version'])
+	opts, args = getopt(sys.argv[1:], '-hf:-v', ['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
 		handle_option(opt_name)
