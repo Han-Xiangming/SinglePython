@@ -198,9 +198,6 @@ def SinglePython_cmd():
 	except FileNotFoundError:
 		# 如果尝试进入用户主目录时出现异常，则将全局变量 cmd_username 赋值为 'user'
 		cmd_username = 'user'
-		# 输出错误信息：无法切换到 SinglePython 用户配置文件，因为找不到默认用户。要使用临时目录用户，请使用“adduser”和“setdefaultuser<username>”创建用户并设置默认用户
-		print(
-			'无法切换到 SinglePython 用户配置文件：找不到默认用户。要使用临时目录用户，请使用“adduser”和“setdefaultuser<username>”创建用户并设置默认用户')
 	try:
 		# 打开文件 "{runpath}/SinglePython_files/hostname/hostname" 并读取内容，将读取的内容赋值给全局变量 cmd_hostname
 		with open(f"{runpath}/SinglePython_files/hostname/hostname", "r") as f:
