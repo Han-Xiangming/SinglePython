@@ -25,7 +25,6 @@ class SinglePythonInfo:
 		self.releases_ver = releases_ver
 		self.build_importlibs = importlibs
 
-
 	def ver(self):
 		print(self.ver)
 
@@ -39,7 +38,6 @@ class SinglePythonInfo:
 		print(self.build_importlibs)
 
 
-
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
 	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 异常
@@ -51,7 +49,6 @@ except Exception:
 	# 输出错误信息，并退出程序
 	print("SinglePython Error: Import Error")  # 打印错误信息
 	sys.exit()  # 退出程序
-
 
 # 获取操作系统类型
 sysinfo = platform.system()
@@ -88,7 +85,6 @@ except ImportError:
 		print("")
 
 
-
 # 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
 def optreadfile_exec(filename):
 	# 尝试打开文件并执行其中的 Python 代码
@@ -97,11 +93,10 @@ def optreadfile_exec(filename):
 			exec(f.read())
 		print(" ")
 		print("Run Python file successfully")
-		# 如果出现异常
+	# 如果出现异常
 	except FileNotFoundError:
 		# 输出错误信息
 		print("SinglePython Error: 文件未找到")
-
 
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
@@ -145,8 +140,10 @@ def SinglePython_shell():
 				elif user_input in ('cls', 'clear'):
 					def cls():
 						pass
+
 					def clear():
 						pass
+
 					os.system('cls' if os.name == 'nt' else 'clear')
 					show_startup_info()
 					continue
@@ -261,7 +258,7 @@ try:
 	# -f 对应 --file=，后面可以接一个文件名作为参数
 	# -v 对应 --version，用于显示版本信息
 	opts, args = getopt(sys.argv[1:], '-hf:-v',
-						['help', 'file=', 'version'])
+	                    ['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
 		handle_option(opt_name)
