@@ -218,7 +218,7 @@ helpinfo = """
 用法: SinglePython [OPTIONS]
 
 Options:
--f | --file   输入 Python 文件名并运行（*.py），但此选项无运行完成提示
+-f | --file   输入 Python 文件名并运行（*.py）
 -h | --help   显示帮助信息
 -v | --version  显示 SinglePython 版本信息
 """
