@@ -41,4 +41,6 @@ pip install -r .\requirement.txt
 ```
 
 3. 构建 SinglePython
-   <br/>运行build.bat即可
+ ```bash
+ pyinstaller  -y main.spec
+ ```
