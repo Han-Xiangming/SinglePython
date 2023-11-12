@@ -106,7 +106,6 @@ def show_startup_info():
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
-# 定义SinglePython_shell函数，循环接收用户输入并执行
 def SinglePython_shell():
     # 循环接收用户输入并执行
     while True:
