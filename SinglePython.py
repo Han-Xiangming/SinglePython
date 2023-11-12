@@ -93,7 +93,7 @@ def optreadfile_exec(filename):
 			exec(f.read())
 		print(" ")
 		print("Run Python file successfully")
-	# 如果出现异常
+		# 如果出现文件未找到的错误
 	except FileNotFoundError:
 		# 输出错误信息
 		print("SinglePython Error: 文件未找到")
@@ -137,15 +137,21 @@ def SinglePython_shell():
 					sys.exit()
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
+					# 如果用户的输入是'cls'或'clear'
 					def cls():
+						# 定义一个函数cls，该函数不执行任何操作
 						pass
 
 					def clear():
+						# 定义一个函数clear，该函数不执行任何操作
 						pass
 
 					os.system('cls' if os.name == 'nt' else 'clear')
+					# 根据操作系统类型执行不同的命令，'cls'用于Windows操作系统，'clear'用于其他操作系统
 					show_startup_info()
+					# 调用show_startup_info函数显示启动信息
 					continue
+
 				# 如果用户输入中含有 ".py"，尝试执行指定的文件
 				elif '.py' in user_input:
 					user_input = str(user_input).replace('"', '')
