@@ -3,7 +3,7 @@
 <div align=center><img src="Icon.ico" width="  "></div>
 <h1 align="center" name="binpython">SinglePython</h1>
 <p align="center">
-    <em>Lightweight and small portable Python, build with pyinstaller
+    <em>Portability of Python
 </em>
 </p>
 <p align="center">
