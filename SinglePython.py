@@ -40,7 +40,7 @@ class SinglePythonInfo:
 
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
-    from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 异常
+    from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError
     import sys  # 导入 sys 模块
     import platform  # 导入 platform 模块
     import os  # 导入 os 模块
