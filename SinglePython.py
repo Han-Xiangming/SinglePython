@@ -12,7 +12,7 @@ importlibs = "os"
 class SinglePythonInfo:
 	def __init__(self, ver, libs_warning, releases_ver, importlibs):
 		"""
-		SinglePythonInfo类构造函数
+    	SinglePythonInfo类构造函数
 
 		参数:
 		- ver: str, Python版本号
