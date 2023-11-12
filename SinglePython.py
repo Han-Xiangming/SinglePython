@@ -92,8 +92,7 @@ def optreadfile_exec(filename):
 		with open(filename, "r") as f:
 			exec(f.read())
 		print(" ")
-		print("Run Python file successfully")
-		# 如果出现文件未找到的错误
+		print("Run Python file successfully")  # 如果出现文件未找到的错误
 	except FileNotFoundError:
 		# 输出错误信息
 		print("SinglePython Error: 文件未找到")
@@ -107,6 +106,7 @@ def show_startup_info():
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
+# 定义SinglePython_shell函数，循环接收用户输入并执行
 def SinglePython_shell():
 	# 循环接收用户输入并执行
 	while True:
@@ -122,6 +122,7 @@ def SinglePython_shell():
 				user_input = input(prompt)
 				# 添加到缓冲区
 				input_buffer += user_input + "\n"
+
 				# 判断用户输入
 				# 如果用户输入为空字符串，结束多行输入
 				if user_input.strip() == "":
