@@ -123,7 +123,7 @@ def SinglePython_shell():
                 # 添加到缓冲区
                 input_buffer += user_input + "\n"
                 # 判断用户输入
-                # 如果用户输入为空字符串，结束多行输入
+                # 如果用户输入为空字符串，结束多行输入0
                 if user_input.strip() == "":
                     multiline_input = False
                 # 如果用户输入以 ":" 结束，表示多行输入
@@ -162,7 +162,7 @@ def SinglePython_shell():
                     # 打印历史记录
                     for i in range(len(history)):
                         # 打印历史记录的索引和内容
-                        print(f"{i + 1}. {history[i]}")
+                        print(f"{i + 1}  {history[i]}")
                     continue
 
                 # 如果不是多行输入，则尝试执行缓冲区内的代码
