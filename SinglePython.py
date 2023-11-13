@@ -200,8 +200,7 @@ def read_file(file_path):
 
 # 定义函数 SinglePython_cmd()
 def SinglePython_cmd():
-    # 获取运行脚本的绝对路径，并将它赋值给全局变量 runpath
-    global runpath
+    # 获取运行脚本的绝对路径，并将它赋值给局部变量 runpath
     runpath = os.path.dirname(os.path.realpath(sys.argv[0]))
     try:
         # 尝试进入以下两个目录：
