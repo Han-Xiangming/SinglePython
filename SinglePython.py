@@ -4,7 +4,7 @@ ver = "0.53"
 libs_warning = "1"
 # 0 表示不开启警告，1 表示开启警告。建议将此值设为 1，保持提醒
 
-
+history = []  # 创建一个空列表，用于存储历史记录
 releases_ver = "official"
 importlibs = "os"
 
@@ -113,6 +113,7 @@ def SinglePython_shell():
             # 初始化多行输入标志
             multiline_input = False
             input_buffer = ""
+
             # 循环读取用户输入
             while True:
                 # 根据 multiline_input 设置提示符号
@@ -131,7 +132,7 @@ def SinglePython_shell():
                 # 否则，表示单行输入
                 else:
                     multiline_input = False
-                user_input = complete(user_input)
+                history.append(user_input)
                 # 如果用户输入为 "exit"，结束程序
                 if user_input == "exit":
                     sys.exit()
@@ -157,6 +158,14 @@ def SinglePython_shell():
                     user_input = str(user_input).replace('"', '')
                     optreadfile_exec(user_input)
                     continue
+                # 如果用户输入为 "history"，打印历史记录
+                elif user_input == "history":
+                    # 打印历史记录
+                    for i in range(len(history)):
+                        # 打印历史记录的索引和内容
+                        print(f"{i + 1}. {history[i]}")
+                    continue
+
                 # 如果不是多行输入，则尝试执行缓冲区内的代码
                 if not multiline_input:
                     try:
