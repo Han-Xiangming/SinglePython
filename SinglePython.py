@@ -40,7 +40,7 @@ class SinglePythonInfo:
 
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
-	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError
+	from getopt import getopt,GetoptError #  导入 getopt 和 GetoptError 模块
 	import sys  # 导入 sys 模块
 	import platform  # 导入 platform 模块
 	import os  # 导入 os 模块
@@ -217,9 +217,9 @@ def SinglePython_cmd():
 				exit()
 	try:
 		# 读取默认登录用户文件，获取用户名并去除首尾空格
-		cmd_username = read_file(f"{runpath}/SinglePython_files/userdata/defaultloginuser").strip()
+		defaultloginuser_file = read_file(f"{runpath}/SinglePython_files/userdata/defaultloginuser").strip()
 		# 创建用户主目录，如果不存在则创建
-		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{cmd_username}", exist_ok=True)
+		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{defaultloginuser_file}", exist_ok=True)
 	except FileNotFoundError:
 		# 捕获文件不存在的异常，设置默认用户名为'user'
 		cmd_username = 'user'
