@@ -40,7 +40,7 @@ class SinglePythonInfo:
 
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
-	from getopt import getopt,GetoptError #  导入 getopt 和 GetoptError 模块
+	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 模块
 	import sys  # 导入 sys 模块
 	import platform  # 导入 platform 模块
 	import os  # 导入 os 模块
@@ -271,6 +271,9 @@ def handle_option(opt_name):
 		finally:
 			# 无论是否出现异常，都要退出程序
 			sys.exit()
+	else:
+		# 如果不是帮助信息选项，也不是版本信息选项，也不是指定文件执行选项，则抛出异常
+		raise GetoptError(opt_name)
 
 
 # 使用 getopt 库处理命令行参数
