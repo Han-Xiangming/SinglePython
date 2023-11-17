@@ -170,7 +170,12 @@ def SinglePython_shell():
 							# 打印历史记录的索引和内容
 							print(f"{i + 1}  {history_list[i]}")
 						continue
-
+				elif user_input == "clear_history":
+					def clear_history():
+						# 定义一个函数clear_history，该函数不执行任何操作
+						pass
+					history_list.clear()
+					continue
 				# 如果不是多行输入，则尝试执行缓冲区内的代码
 				if not multiline_input:
 					try:
