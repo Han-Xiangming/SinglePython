@@ -157,6 +157,7 @@ def SinglePython_shell():
 				elif user_input == "history":
 					# 打印历史记录
 					for i in range(len(history)):
+						print(" ")
 						# 打印历史记录的索引和内容
 						print(f"{i + 1}  {history[i]}")
 					continue
