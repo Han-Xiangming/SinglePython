@@ -4,7 +4,7 @@ ver = "0.54"
 libs_warning = "1"
 # 0 表示不开启警告，1 表示开启警告。建议将此值设为 1，保持提醒
 
-history = []  # 创建一个空列表，用于存储历史记录
+history_list = []  # 创建一个空列表，用于存储历史记录
 releases_ver = "official"
 importlibs = "os"
 
@@ -128,7 +128,7 @@ def SinglePython_shell():
 				# 否则，表示单行输入
 				else:
 					multiline_input = False
-				history.append(user_input)
+				history_list.append(user_input)
 				# 如果用户输入为 "exit"，结束程序
 				if user_input == "exit":
 					sys.exit()
@@ -154,17 +154,21 @@ def SinglePython_shell():
 					user_input = str(user_input).replace('"', '')
 					optreadfile_exec(user_input)
 					continue
+				# 如果用户输入为 "history"，打印历史记录
 				elif user_input == "history":
+					def history():
+						# 定义一个函数history，该函数不执行任何操作
+						pass
+
+					history_list.remove("history")
 					# 打印历史记录
-					if len(history) == 1:
+					if len(history_list) == 0:
 						print("No history")
 						continue
 					else:
-						print("")
-						for i in range(len(history)):
-
+						for i in range(len(history_list)):
 							# 打印历史记录的索引和内容
-							print(f"{i + 1}  {history[i]}")
+							print(f"{i + 1}  {history_list[i]}")
 						continue
 
 				# 如果不是多行输入，则尝试执行缓冲区内的代码
