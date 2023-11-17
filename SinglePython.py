@@ -143,10 +143,10 @@ def SinglePython_shell():
 						# 定义一个函数clear，该函数不执行任何操作
 						pass
 
-					os.system('cls' if os.name == 'nt' else 'clear')
 					# 根据操作系统类型执行不同的命令，'cls'用于Windows操作系统，'clear'用于其他操作系统
-					show_startup_info()
+					os.system('cls' if os.name == 'nt' else 'clear')
 					# 调用show_startup_info函数显示启动信息
+					show_startup_info()
 					continue
 
 				# 如果用户输入中含有 ".py"，尝试执行指定的文件
@@ -156,6 +156,7 @@ def SinglePython_shell():
 					continue
 				elif user_input == "history":
 					# 打印历史记录
+					print("")
 					for i in range(len(history)):
 						# 打印历史记录的索引和内容
 						print(f"{i + 1}  {history[i]}")
