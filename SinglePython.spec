@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-
+ver = '0.54'
 
 a = Analysis(
     ['SinglePython.py'],
@@ -21,7 +21,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='SinglePython',
+    name='SinglePython' + "-" + ver + "-" + "Windows",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
