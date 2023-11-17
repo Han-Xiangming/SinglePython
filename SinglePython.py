@@ -50,22 +50,18 @@ except Exception:
 	print("SinglePython Error: Import Error")  # 打印错误信息
 	sys.exit()  # 退出程序
 
-# 获取操作系统类型
-sysinfo = platform.system()
 
-# 如果是 Windows 系统，则定义 SinglePythonWin 类，用于设置控制台标题
-if sysinfo == "Windows":
-	class SinglePythonwin:
-		# set_console_title 方法用于设置控制台标题
-		def set_console_title(self):
-			import ctypes
-			# 使用 ctypes 库设置控制台标题
-			ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {ver}")
+class SinglePythonwin:
+	# set_console_title 方法用于设置控制台标题
+	def set_console_title(self):
+		import ctypes
+		# 使用 ctypes 库设置控制台标题
+		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {ver}")
 
 
-	# 创建 SinglePythonwin 对象，并调用其 set_console_title 方法设置控制台标题
-	win = SinglePythonwin()
-	win.set_console_title()
+# 创建 SinglePythonwin 对象，并调用其 set_console_title 方法设置控制台标题
+win = SinglePythonwin()
+win.set_console_title()
 
 
 # 定义 self_import 函数，用于自导入指定的名字空间
