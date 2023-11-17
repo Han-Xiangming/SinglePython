@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-ver = '0.54'
+ver = '0.55'
 
 a = Analysis(
     ['SinglePython.py'],
