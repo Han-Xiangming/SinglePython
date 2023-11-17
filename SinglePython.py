@@ -103,6 +103,7 @@ def show_startup_info():
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
 def SinglePython_shell():
+	input_count = 1  # 设置输入计数为1
 	# 循环接收用户输入并执行
 	while True:
 		try:
@@ -113,7 +114,7 @@ def SinglePython_shell():
 			# 循环读取用户输入
 			while True:
 				# 根据 multiline_input 设置提示符号
-				prompt = "..." if multiline_input else ">>> "
+				prompt = "   ...:  " if multiline_input else f"In [{input_count}]: "
 				# 读取一行用户输入
 				user_input = input(prompt)
 				# 添加到缓冲区
@@ -128,54 +129,50 @@ def SinglePython_shell():
 				# 否则，表示单行输入
 				else:
 					multiline_input = False
-				history_list.append(user_input)
+
+				history_list.append(user_input)  # 将用户输入添加到历史记录列表中
 				# 如果用户输入为 "exit"，结束程序
 				if user_input == "exit":
 					sys.exit()
+				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
+				elif user_input in globals() or user_input in locals():
+					# 使用eval函数对变量名进行求值，并输出结果
+					print(eval(user_input))
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
-					# 如果用户的输入是'cls'或'clear'
-					def cls():
-						# 定义一个函数cls，该函数不执行任何操作
-						pass
-
-					def clear():
-						# 定义一个函数clear，该函数不执行任何操作
-						pass
-
-					# 根据操作系统类型执行不同的命令，'cls'用于Windows操作系统，'clear'用于其他操作系统
+					# 如果用户输入为'cls'或'clear'
+					# 根据操作系统类型执行不同的命令
+					# 'cls'用于Windows操作系统，'clear'用于其他操作系统
 					os.system('cls' if os.name == 'nt' else 'clear')
 					# 调用show_startup_info函数显示启动信息
 					show_startup_info()
-					continue
+					input_count = 1
+					break
 
 				# 如果用户输入中含有 ".py"，尝试执行指定的文件
 				elif '.py' in user_input:
 					user_input = str(user_input).replace('"', '')
 					optreadfile_exec(user_input)
-					continue
+					break
 				# 如果用户输入为 "history"，打印历史记录
 				elif user_input == "history":
-					def history():
-						# 定义一个函数history，该函数不执行任何操作
-						pass
-
 					history_list.remove("history")
 					# 打印历史记录
 					if len(history_list) == 0:
 						print("No history")
-						continue
+						break
 					else:
 						for i in range(len(history_list)):
 							# 打印历史记录的索引和内容
-							print(f"{i + 1}  {history_list[i]}")
-						continue
+							print(f"      {i + 1}  {history_list[i]}")
+						break
 				elif user_input == "clear_history":
 					def clear_history():
 						# 定义一个函数clear_history，该函数不执行任何操作
 						pass
+
 					history_list.clear()
-					continue
+					break
 				# 如果不是多行输入，则尝试执行缓冲区内的代码
 				if not multiline_input:
 					try:
@@ -186,6 +183,7 @@ def SinglePython_shell():
 						# 执行时遇到异常，打印错误信息并继续读取下一条命令
 						print(f"Error: {e}")
 						input_buffer = ""
+				input_count += 1  # 输入计数加一
 		except KeyboardInterrupt:
 			# 如果捕获到键盘中断异常，则输出信息并退出程序
 			print("KeyboardInterrupt")
