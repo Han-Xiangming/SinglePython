@@ -158,7 +158,6 @@ def SinglePython_shell():
 					# 打印历史记录
 					print("")
 					for i in range(len(history)):
-						print(" ")
 						# 打印历史记录的索引和内容
 						print(f"{i + 1}  {history[i]}")
 					continue
