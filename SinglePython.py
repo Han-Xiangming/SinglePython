@@ -156,11 +156,16 @@ def SinglePython_shell():
 					continue
 				elif user_input == "history":
 					# 打印历史记录
-					print("")
-					for i in range(len(history)):
-						# 打印历史记录的索引和内容
-						print(f"{i + 1}  {history[i]}")
-					continue
+					if len(history) == 1:
+						print("No history")
+						continue
+					else:
+						print("")
+						for i in range(len(history)):
+
+							# 打印历史记录的索引和内容
+							print(f"{i + 1}  {history[i]}")
+						continue
 
 				# 如果不是多行输入，则尝试执行缓冲区内的代码
 				if not multiline_input:
