@@ -13,7 +13,8 @@ a = Analysis(
     excludes=[],
     noarchive=False,
 )
-pyz = PYZ(a.pure)
+pyz = PYZ(a.pure,a.zipped_data,
+            cipher=block_cipher)
 
 exe = EXE(
     pyz,
