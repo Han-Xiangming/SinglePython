@@ -38,7 +38,7 @@ try:
 # 如果发生异常
 except Exception:
 	# 输出错误信息，并退出程序
-	print(f"{color_print("SinglePython Error", 'red')}: Import Error")  # 打印错误信息
+	print(f"{color_print("SinglePython Error:", 'red')} Import Error")  # 打印错误信息
 	sys.exit()  # 退出程序
 
 
@@ -73,7 +73,7 @@ except ImportError:
 	if SinglePythonInfo["libs_warning"] == 1:
 		# 打印警告信息，提示自定义导入的库不存在，请检查源代码库配置并重新构建
 		print(
-			f"033[{color_print("SinglePython Warning", 'yellow')}: 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
+			f"033[{color_print("SinglePython Warning:", 'yellow')} 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
 		print("")
 
 
@@ -87,7 +87,7 @@ def optreadfile_exec(filename):
 	"""
 	if not os.path.isfile(filename):
 		# 如果指定文件不存在
-		print(f"{color_print('SinglePython Error', 'red')}: File not found")
+		print(f"{color_print('SinglePython Error:', 'red')} File not found")
 		return
 
 	try:
@@ -97,13 +97,13 @@ def optreadfile_exec(filename):
 		# 执行编译后的代码
 		exec(code)
 		print(" ")
-		print(f"{color_print('SinglePython Info', 'magenta')}: {filename} executed successfully")
+		print(f"{color_print('SinglePython Info:', 'magenta')} {filename} executed successfully")
 	except SyntaxError:
 		# 如果存在语法错误
-		print(f"{color_print('SyntaxError', 'red')}: Syntax error in the Python code")
+		print(f"{color_print('SyntaxError:', 'red')} Syntax error in the Python code")
 	except Exception as e:
 		# 如果存在其他异常
-		print(f"{color_print('SinglePython Error', 'red')}:", str(e))
+		print(f"{color_print('SinglePython Error:', 'red')}", str(e))
 
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
@@ -155,7 +155,7 @@ def SinglePython_shell():
 				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
 				elif user_input in globals() or user_input in locals():
 					# 使用eval函数对变量名进行求值，并输出结果
-					print(f"{color_print('Out', 'blue')}[{input_count - 1}]: {eval(user_input)}")
+					print(f"{color_print('Out:', 'blue')}[{input_count - 1}] {eval(user_input)}")
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
 					"""
@@ -198,7 +198,7 @@ def SinglePython_shell():
 						input_buffer = ""
 					except Exception as e:
 						# 执行时遇到异常，打印错误信息并继续读取下一条命令
-						print(f"{color_print('Error', 'red')}: {e}")
+						print(f"{color_print('Error:', 'red')} {e}")
 						input_buffer = ""
 		except KeyboardInterrupt:
 			# 如果捕获到键盘中断异常，则输出信息并退出程序
@@ -314,7 +314,7 @@ try:
 # 处理可能出现的 getopt 错误
 except GetoptError as err:
 	# 输出错误信息：您使用的参数不存在或未完全输入，请查看帮助!!!
-	print(f"{color_print('参数错误', 'red')}: {str(err)}")
+	print(f"{color_print('参数错误:', 'red')} {str(err)}")
 	# 输出帮助信息
 	print(helpinfo)
 	# 退出程序
