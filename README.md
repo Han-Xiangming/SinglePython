@@ -3,7 +3,7 @@
 <div align=center><img src="Icon.ico" width="  "></div>
 <h1 align="center" name="binpython">SinglePython</h1>
 <p align="center">
-    <em>Portability of Python
+    <em>SinglePython 是一个轻量级的 Python 解释器，可以作为命令行工具或 Windows Start 菜单快捷方式使用。它提供了一个简单的交互式 shell 和一些有用的功能，如导入自定义库、执行指定的 Python 文件等。
 </em>
 </p>
 <p align="center">
@@ -44,3 +44,10 @@ pip install -r .\requirement.txt
  ```bash
  pyinstaller  -y main.spec
  ```
+
+## 联系我们
+
+如果您在使用 SinglePython 过程中遇到任何问题或有任何建议，请通过以下方式与我们联系：
+
+- 发送电子邮件到 2728513634@qq.com。
+- 在 [GitHub](https://github.com/Han-Xiangming/SinglePython/issues) 上新建一个 issue。 
