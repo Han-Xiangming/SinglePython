@@ -52,16 +52,13 @@ except Exception:
 
 
 class SinglePythonwin:
-	# set_console_title 方法用于设置控制台标题
 	def set_console_title(self):
+		"""
+		设置控制台窗口标题为"SinglePython {ver}"
+		"""
 		import ctypes
-		# 使用 ctypes 库设置控制台标题
 		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {ver}")
 
-
-# 创建 SinglePythonwin 对象，并调用其 set_console_title 方法设置控制台标题
-win = SinglePythonwin()
-win.set_console_title()
 
 
 # 定义 self_import 函数，用于自导入指定的名字空间
@@ -83,22 +80,44 @@ except ImportError:
 
 # 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
 def optreadfile_exec(filename):
-	# 尝试打开文件并执行其中的 Python 代码
+	"""
+	在指定文件中运行 Python 代码
+
+	:参数 filename： 字符串 包含 Python 代码的文件的名称
+	:返回: None
+	"""
+	if not os.path.isfile(filename):
+		# 如果指定文件不存在
+		print("SinglePython Error: File not found")
+		return
+
 	try:
+		# 读取指定文件中的 Python 代码
 		with open(filename, "r") as f:
-			exec(f.read())
+			code = compile(f.read(), filename, 'exec')
+		# 执行编译后的代码
+		exec(code)
 		print(" ")
-		print("Run Python file successfully")  # 如果出现文件未找到的错误
-	except FileNotFoundError:
-		# 输出错误信息
-		print("SinglePython Error: 文件未找到")
+		print("Run Python file successfully")
+	except SyntaxError:
+		# 如果存在语法错误
+		print("SinglePython Error: Syntax error in the Python code")
+	except Exception as e:
+		# 如果存在其他异常
+		print("SinglePython Error:", str(e))
 
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
 def show_startup_info():
-	# 打印 SinglePython 版本，Python 版本和运行环境等信息
-	print(
-		f"SinglePython {ver}-{releases_ver} (Python Version:{platform.python_version()}) [Running on {platform.platform()} {platform.version()}]")
+	# 获取 SinglePython 版本
+	sp_version = f"SinglePython {ver}-{releases_ver}"
+	# 获取 Python 版本
+	py_version = platform.python_version()
+	# 获取运行环境信息
+	env_info = f" [Running on {platform.platform()} {platform.version()}]"
+
+	# 打印欢迎信息
+	print(f"{sp_version} (Python Version: {py_version}) {env_info}")
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
@@ -140,9 +159,11 @@ def SinglePython_shell():
 					print(eval(user_input))
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
-					# 如果用户输入为'cls'或'clear'
-					# 根据操作系统类型执行不同的命令
-					# 'cls'用于Windows操作系统，'clear'用于其他操作系统
+					"""
+					如果用户输入为'cls'或'clear'
+					根据操作系统类型执行不同的命令
+					'cls'用于Windows操作系统，'clear'用于其他操作系统
+					"""
 					os.system('cls' if os.name == 'nt' else 'clear')
 					# 调用show_startup_info函数显示启动信息
 					show_startup_info()
@@ -162,16 +183,13 @@ def SinglePython_shell():
 						print("No history")
 						break
 					else:
-						for i in range(len(history_list)):
-							# 打印历史记录的索引和内容
-							print(f"      {i + 1}  {history_list[i]}")
+						# 打印历史记录的索引和内容
+						for i, item in enumerate(history_list):
+							print(f"      {i + 1}  {item}")
 						break
 				elif user_input == "clear_history":
-					def clear_history():
-						# 定义一个函数clear_history，该函数不执行任何操作
-						pass
-
-					history_list.clear()
+					clear_history = lambda: history_list.clear()
+					clear_history()
 					break
 				# 如果不是多行输入，则尝试执行缓冲区内的代码
 				if not multiline_input:
@@ -203,6 +221,8 @@ def read_file(file_path):
 	返回值:
 	str: 文件内容的字符串表示，去除首尾的空格和换行符
 	"""
+	if not os.path.isfile(file_path):
+		raise FileNotFoundError("文件不存在或不是文件: {}".format(file_path))
 	with open(file_path, "r") as f:
 		return f.read().strip()
 
@@ -253,7 +273,7 @@ Options:
 
 
 # 定义函数handle_option，用于处理命令行选项
-def handle_option(opt_name):
+def handle_option(opt_name, opt_value=None):
 	# 检查是否是帮助信息选项
 	if opt_name in ('-h', '--help'):
 		# 打印帮助信息并退出程序
@@ -267,16 +287,10 @@ def handle_option(opt_name):
 	# 检查是否是指定文件执行选项
 	elif opt_name in ('-f', '--file'):
 		# 获取指定的文件路径
-		file = opt_value if opt_value is not None else ''
+		filename = opt_value if opt_value is not None else ''
 		try:
 			# 读取文件内容并执行
-			exec(open(file).read())
-		except IOError:
-			# 捕获IOError异常时，打印错误信息，包括文件名
-			print(f"Error opening or reading file: {opt_value}")
-		except Exception as e:
-			# 捕获其他异常时，打印错误信息，包括代码和异常信息
-			print(f"Error executing code from {opt_value}: {e}")
+			optreadfile_exec(filename)
 		finally:
 			# 无论是否出现异常，都要退出程序
 			sys.exit()
@@ -294,7 +308,7 @@ try:
 	opts, args = getopt(sys.argv[1:], '-hf:-v', ['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
-		handle_option(opt_name)
+		handle_option(opt_name, opt_value)
 # 处理可能出现的 getopt 错误
 except GetoptError as err:
 	# 输出错误信息：您使用的参数不存在或未完全输入，请查看帮助!!!
