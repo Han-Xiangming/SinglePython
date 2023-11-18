@@ -4,6 +4,31 @@ SinglePythonInfo = {"ver": 0.57,  # 版本号
                     "importlibs": "os"  # 导入的库信息
                     }
 history_list = []  # 创建一个空列表，用于存储历史记录
+
+
+def color_print(text, color):
+	"""
+	Print text in the specified color.
+
+	:param text: The text to print.
+	:param color: The color of the text, as a string.
+	"""
+	colors = {
+		'red': f'\033[91m',
+		'green': f'\033[92m',
+		'yellow': f'\033[93m',
+		'blue': f'\033[94m',
+		'magenta': f'\033[95m',
+		'cyan': f'\033[96m',
+		'white': f'\033[97m'
+	}
+
+	if color in colors:
+		return colors[color] + text + '\033[0m'
+	else:
+		return text
+
+
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
 	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 模块
@@ -13,7 +38,7 @@ try:
 # 如果发生异常
 except Exception:
 	# 输出错误信息，并退出程序
-	print("SinglePython Error: Import Error")  # 打印错误信息
+	print(f"{color_print("SinglePython Error", 'red')}: Import Error")  # 打印错误信息
 	sys.exit()  # 退出程序
 
 
@@ -47,7 +72,8 @@ except ImportError:
 	# 如果 SinglePythonInfo 字典中的 "libs_warning" 键的值为 1 ，则执行下面的代码块
 	if SinglePythonInfo["libs_warning"] == 1:
 		# 打印警告信息，提示自定义导入的库不存在，请检查源代码库配置并重新构建
-		print(f"Warning: 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
+		print(
+			f"033[{color_print("SinglePython Warning", 'yellow')}: 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
 		print("")
 
 
@@ -61,7 +87,7 @@ def optreadfile_exec(filename):
 	"""
 	if not os.path.isfile(filename):
 		# 如果指定文件不存在
-		print("SinglePython Error: File not found")
+		print(f"{color_print('SinglePython Error', 'red')}: File not found")
 		return
 
 	try:
@@ -71,13 +97,13 @@ def optreadfile_exec(filename):
 		# 执行编译后的代码
 		exec(code)
 		print(" ")
-		print("Run Python file successfully")
+		print(f"{color_print('SinglePython Info', 'magenta')}: {filename} executed successfully")
 	except SyntaxError:
 		# 如果存在语法错误
-		print("SinglePython Error: Syntax error in the Python code")
+		print(f"{color_print('SyntaxError', 'red')}: Syntax error in the Python code")
 	except Exception as e:
 		# 如果存在其他异常
-		print("SinglePython Error:", str(e))
+		print(f"{color_print('SinglePython Error', 'red')}:", str(e))
 
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
@@ -90,7 +116,7 @@ def show_startup_info():
 	env_info = f" [Running on {platform.platform()} {platform.version()}]"
 
 	# 打印欢迎信息
-	print(f"{sp_version} (Python Version: {py_version}) {env_info}")
+	print(f"{color_print(f'{sp_version} (Python Version: {py_version}) {env_info}', 'cyan')}")
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
@@ -129,7 +155,7 @@ def SinglePython_shell():
 				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
 				elif user_input in globals() or user_input in locals():
 					# 使用eval函数对变量名进行求值，并输出结果
-					print(eval(user_input))
+					print(f"{color_print('Out', 'blue')}[{input_count - 1}]: {eval(user_input)}")
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
 					"""
@@ -153,12 +179,12 @@ def SinglePython_shell():
 					history_list.remove("history")
 					# 打印历史记录
 					if len(history_list) == 0:
-						print("No history")
+						print(color_print("No history", 'red'))
 						break
 					else:
 						# 打印历史记录的索引和内容
 						for i, item in enumerate(history_list):
-							print(f"      {i + 1}  {item}")
+							print(f"{color_print(f"{i + 1} ", 'blue')} {item}")
 						break
 				elif user_input == "clear_history":
 					clear_history = lambda: history_list.clear()
@@ -172,7 +198,7 @@ def SinglePython_shell():
 						input_buffer = ""
 					except Exception as e:
 						# 执行时遇到异常，打印错误信息并继续读取下一条命令
-						print(f"Error: {e}")
+						print(f"{color_print('Error', 'red')}: {e}")
 						input_buffer = ""
 		except KeyboardInterrupt:
 			# 如果捕获到键盘中断异常，则输出信息并退出程序
@@ -254,8 +280,9 @@ def handle_option(opt_name, opt_value=None):
 	# 检查是否是版本信息选项
 	elif opt_name in ('-v', '--version'):
 		# 打印版本信息并退出程序
-		print(
-			f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}, powered by Python {platform.python_version()}")
+		print(color_print(
+			f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}, powered by Python {platform.python_version()}",
+			'cyan'))
 		sys.exit(0)
 	# 检查是否是指定文件执行选项
 	elif opt_name in ('-f', '--file'):
@@ -287,7 +314,7 @@ try:
 # 处理可能出现的 getopt 错误
 except GetoptError as err:
 	# 输出错误信息：您使用的参数不存在或未完全输入，请查看帮助!!!
-	print(f"参数错误: {str(err)}")
+	print(f"{color_print('参数错误', 'red')}: {str(err)}")
 	# 输出帮助信息
 	print(helpinfo)
 	# 退出程序
@@ -300,5 +327,5 @@ try:
 	SinglePython_shell()
 except Exception:
 	# 如果发生任何异常，打印错误信息并退出程序
-	print("An error occurred:", sys.exc_info()[0])
+	print(color_print("An error occurred:", 'red'), sys.exc_info()[0])
 	sys.exit(1)
