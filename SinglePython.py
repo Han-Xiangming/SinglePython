@@ -155,7 +155,7 @@ def SinglePython_shell():
 				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
 				elif user_input in globals() or user_input in locals():
 					# 使用eval函数对变量名进行求值，并输出结果
-					print(f"{color_print('Out:', 'blue')}[{input_count - 1}] {eval(user_input)}")
+					print(f"{color_print(f'Out[{input_count - 1}]:', 'blue')} {eval(user_input)}")
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
 					"""
