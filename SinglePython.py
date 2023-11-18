@@ -1,43 +1,9 @@
-# 定义 SinglePython 的版本号
-ver = "0.56"
-# 定义变量，用以判断是否开启对库缺失的警告提示
-libs_warning = "1"
-# 0 表示不开启警告，1 表示开启警告。建议将此值设为 1，保持提醒
-
+SinglePythonInfo = {"ver": 0.56,  # 版本号
+                    "libs_warning": 1,  # 库警告
+                    "releases_ver": "official",  # 发布版本号
+                    "importlibs": "os"  # 导入的库信息
+                    }
 history_list = []  # 创建一个空列表，用于存储历史记录
-releases_ver = "official"
-importlibs = "os"
-
-
-class SinglePythonInfo:
-	def __init__(self, ver, libs_warning, releases_ver, importlibs):
-		"""
-		SinglePythonInfo类构造函数
-
-		参数:
-		- ver: str, Python版本号
-		- libs_warning: list, 包含警告的库列表
-		- releases_ver: str, 发布的版本号
-		- importlibs: list, 导入的库列表
-		"""
-		self.ver = ver
-		self.libs_warning = libs_warning
-		self.releases_ver = releases_ver
-		self.imported_libraries = importlibs
-
-	def ver(self):
-		print(self.ver)
-
-	def libs_warning(self):
-		print(self.libs_warning)
-
-	def releases_ver(self):
-		print(self.releases_ver)
-
-	def build_importlibs(self):
-		print(self.build_importlibs)
-
-
 # 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
 	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 模块
@@ -57,8 +23,7 @@ class SinglePythonwin:
 		设置控制台窗口标题为"SinglePython {ver}"
 		"""
 		import ctypes
-		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {ver}")
-
+		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {SinglePythonInfo['ver']}")
 
 
 # 定义 self_import 函数，用于自导入指定的名字空间
@@ -69,12 +34,13 @@ def self_import(name):
 
 # 尝试自导入用户提供的库
 try:
-	self_import(importlibs)
+	self_import(SinglePythonInfo["importlibs"])
 # 如果引发 ImportError 异常
 except ImportError:
-	# 如果 libs_warning 变量等于 "1"，则打印出警告信息，提示用户检查源代码库配置并重新构建
-	if libs_warning == "1":
-		print(f"Warning: 自定义导入库 {importlibs} 不存在，请检查源代码库配置并重新构建")
+	# 如果 SinglePythonInfo 字典中的 "libs_warning" 键的值为 1 ，则执行下面的代码块
+	if SinglePythonInfo["libs_warning"] == 1:
+		# 打印警告信息，提示自定义导入的库不存在，请检查源代码库配置并重新构建
+		print(f"Warning: 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
 		print("")
 
 
@@ -110,7 +76,7 @@ def optreadfile_exec(filename):
 # 定义 show_startup_info 函数，用于显示欢迎信息
 def show_startup_info():
 	# 获取 SinglePython 版本
-	sp_version = f"SinglePython {ver}-{releases_ver}"
+	sp_version = f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}"
 	# 获取 Python 版本
 	py_version = platform.python_version()
 	# 获取运行环境信息
@@ -148,7 +114,7 @@ def SinglePython_shell():
 				# 否则，表示单行输入
 				else:
 					multiline_input = False
-
+				input_count += 1  # 输入计数加一
 				history_list.append(user_input)  # 将用户输入添加到历史记录列表中
 				# 如果用户输入为 "exit"，结束程序
 				if user_input == "exit":
@@ -201,7 +167,6 @@ def SinglePython_shell():
 						# 执行时遇到异常，打印错误信息并继续读取下一条命令
 						print(f"Error: {e}")
 						input_buffer = ""
-				input_count += 1  # 输入计数加一
 		except KeyboardInterrupt:
 			# 如果捕获到键盘中断异常，则输出信息并退出程序
 			print("KeyboardInterrupt")
@@ -266,9 +231,9 @@ helpinfo = """
 用法: SinglePython [OPTIONS]
 
 Options:
--f | --file   输入 Python 文件名并运行（*.py）
--h | --help   显示帮助信息
--v | --version  显示 SinglePython 版本信息
+  -f --file   输入 Python 文件名并运行（*.py）
+  -h --help   显示帮助信息
+  -v --version  显示 SinglePython 版本信息
 """
 
 
@@ -282,7 +247,8 @@ def handle_option(opt_name, opt_value=None):
 	# 检查是否是版本信息选项
 	elif opt_name in ('-v', '--version'):
 		# 打印版本信息并退出程序
-		print(f"SinglePython {ver}-{releases_ver}, powered by Python {platform.python_version()}")
+		print(
+			f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}, powered by Python {platform.python_version()}")
 		sys.exit(0)
 	# 检查是否是指定文件执行选项
 	elif opt_name in ('-f', '--file'):
@@ -299,12 +265,14 @@ def handle_option(opt_name, opt_value=None):
 		raise GetoptError(opt_name)
 
 
-# 使用 getopt 库处理命令行参数
+# 使用 argparse 库处理命令行参数
 try:
-	# 设置可选参数及其对应的短选项和长选项：
-	# -h 对应 --help，用于显示帮助信息
-	# -f 对应 --file=，后面可以接一个文件名作为参数
-	# -v 对应 --version，用于显示版本信息
+	"""
+	设置可选参数及其对应的短选项和长选项：
+	-h 对应 --help，用于显示帮助信息
+	-f 对应 --file=，后面可以接一个文件名作为参数
+	-v 对应 --version，用于显示版本信息
+	"""
 	opts, args = getopt(sys.argv[1:], '-hf:-v', ['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
