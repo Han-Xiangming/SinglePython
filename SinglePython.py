@@ -20,7 +20,14 @@ except Exception:
 class SinglePythonwin:
 	def set_console_title(self):
 		"""
-		设置控制台窗口标题为"SinglePython {ver}"
+		设置控制台标题
+		该方法使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数，将控制台标题设置为"SinglePython {SinglePythonInfo['ver']}"
+
+		参数：
+		无
+
+		返回值：
+		无
 		"""
 		import ctypes
 		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {SinglePythonInfo['ver']}")
