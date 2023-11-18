@@ -133,13 +133,13 @@ def SinglePython_shell():
             # 循环读取用户输入
             while True:
                 # 根据 multiline_input 设置提示符号
-                prompt = "   ...:  " if multiline_input else f"In [{input_count}]: "
+                prompt = "   ...:" if multiline_input else f"In [{input_count}]: "
                 # 读取一行用户输入
                 user_input = input(prompt)
                 # 添加到缓冲区
                 input_buffer += user_input + "\n"
                 # 判断用户输入
-                # 如果用户输入为空字符串，结束多行输入0
+                # 如果用户输入为空字符串，结束多行输入
                 if user_input.strip() == "":
                     multiline_input = False
                 # 如果用户输入以 ":" 结束，表示多行输入
@@ -187,8 +187,10 @@ def SinglePython_shell():
                         for i, item in enumerate(history_list):
                             print(f"{color_print(f"{i + 1} ", 'blue')} {item}")
                         break
+                # 如果用户输入为 "clear_history"，清空历史记录
                 elif user_input == "clear_history":
                     clear_history = lambda: history_list.clear()
+                    # 调用clear_history函数清空历史记录
                     clear_history()
                     break
                 # 如果不是多行输入，则尝试执行缓冲区内的代码
