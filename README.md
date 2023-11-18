@@ -26,13 +26,24 @@
 
 该脚本提供了以下功能：
 
-- 交互式命令行：进入 SinglePython 主界面后，您可以输入 Python 代码并立即执行。按下 Ctrl+C 组合键可以退出 SinglePython。
-- 文件执行：使用 -f 或 --file 选项后跟文件名，可以执行指定的 Python 文件。例如：SinglePython -f test.py
-- 显示帮助信息：使用 -h 或 --help 选项可以显示帮助信息，了解其他可用的选项和用法。
-- 显示版本信息：使用 -v 或 --version 选项可以显示 SinglePython 的版本信息。
-- 集成第三方库
+- 交互式 Python 解释器，可以进行实时的 Python 编程；
+- 文件执行：使用 -f 或 --file 选项后跟文件名，可以执行指定的 Python 文件。例如：SinglePython -f test.py；
+- 显示帮助信息：使用 -h 或 --help 选项可以显示帮助信息，了解其他可用的选项和用法。；
+- 显示版本信息：使用 -v 或 --version 选项可以显示 SinglePython 的版本信息。；
+- 集成第三方库。
 
-# 构建
+## 程序截图
+
+<div align=center><img src="./docs/screenshot.png"></div>
+
+## 构建
+
+### 前提条件
+
+- Python 3.12+
+- PyInstaller 4.5+
+
+### 步骤
 
 1. 克隆此项目
 
@@ -75,4 +86,4 @@ SinglePython 项目由多位贡献者共同打造，包括：
 如果您在使用 SinglePython 过程中遇到任何问题或有任何建议，请通过以下方式与我们联系：
 
 - 发送电子邮件到 2728513634@qq.com。
-- 在 [GitHub](https://github.com/Han-Xiangming/SinglePython/issues) 上新建一个 issue。 
+- 在 [GitHub](https://github.com/Han-Xiangming/SinglePython/issues) 上提交一个 issue。 
