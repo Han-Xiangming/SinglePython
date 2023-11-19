@@ -10,7 +10,6 @@
 
 <img alt="Github stars" src="https://img.shields.io/github/stars/Han-Xiangming/SinglePython.svg"/>
 <img alt="pyver" src="https://img.shields.io/badge/PythonVersion-&gt;3.12-green"/>
-<img alt="license" src="https://img.shields.io/badge/LICENSE-AGPL--3.0-brightgreen"/>
 
 ### BiliBili: https://space.bilibili.com/669743441
 
