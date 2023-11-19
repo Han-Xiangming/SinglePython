@@ -18,14 +18,6 @@
 
 <div align=center><img src="./docs/screenshot.png"></div>
 
-## 安装与使用
-
-请按照以下步骤安装并使用 SinglePython：
-
-1. 下载 SinglePython：请在 [SinglePython releases 页面](https://github.com/Han-Xiangming/SinglePython/releases)
-   下载适合您操作系统的版本，并解压缩到任意目录。
-2. 运行 SinglePython：在命令行中输入 SinglePython.exe（Windows），然后按下回车键。/ 双击 SinglePython.exe（Windows）即可运行。
-
 ## 程序说明
 
 该脚本提供了以下功能：
@@ -37,6 +29,14 @@
 - 支持执行系统命令： 在输入时带有 ! 前缀，可以执行系统命令。例如：!dir ;
 - 支持显示变量信息： 在输入时带有 ? 后缀，可以显示变量信息。例如：a?
 - 集成第三方库。
+
+## 安装与使用
+
+请按照以下步骤安装并使用 SinglePython：
+
+1. 下载 SinglePython：请在 [SinglePython releases 页面](https://github.com/Han-Xiangming/SinglePython/releases)
+   下载适合您操作系统的版本，并解压缩到任意目录。
+2. 运行 SinglePython：在命令行中输入 SinglePython.exe（Windows），然后按下回车键。/ 双击 SinglePython.exe（Windows）即可运行。
 
 ## 构建
 
