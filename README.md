@@ -14,6 +14,10 @@
 
 ### BiliBili: https://space.bilibili.com/669743441
 
+## 程序截图
+
+<div align=center><img src="./docs/screenshot.png"></div>
+
 ## 安装与使用
 
 请按照以下步骤安装并使用 SinglePython：
@@ -30,11 +34,9 @@
 - 文件执行：使用 -f 或 --file 选项后跟文件名，可以执行指定的 Python 文件。例如：SinglePython -f test.py；
 - 显示帮助信息：使用 -h 或 --help 选项可以显示帮助信息，了解其他可用的选项和用法。；
 - 显示版本信息：使用 -v 或 --version 选项可以显示 SinglePython 的版本信息。；
+- 支持执行系统命令： 在输入时带有 ! 前缀，可以执行系统命令。例如：!dir。
+- 支持显示变量信息： 在输入时带有 ? 后缀，可以显示变量信息。例如：a?
 - 集成第三方库。
-
-## 程序截图
-
-<div align=center><img src="./docs/screenshot.png"></div>
 
 ## 构建
 

@@ -1,4 +1,4 @@
-SinglePythonInfo = {"ver": 0.58,  # 版本号
+SinglePythonInfo = {"ver": 0.59,  # 版本号
                     "libs_warning": 1,  # 库警告
                     "releases_ver": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
@@ -152,9 +152,23 @@ def SinglePython_shell():
 				# 如果用户输入为 "exit"，结束程序
 				if user_input == "exit":
 					sys.exit()
+				elif user_input.startswith("!"):
+					# 如果用户输入以 "!" 开头，则执行系统命令
+					os.system(user_input[1:])
+					break
+				elif user_input.endswith("?"):
+					# 如果用户输入以 "?" 结尾，则尝试输出以"?"前的值为变量名的数据类型，值
+					variable_name = user_input[:-1]
+					if variable_name in globals() or variable_name in locals():
+						print(f"{color_print('Type: ', 'red')} {str(type(eval(variable_name)))[8:-2]}")
+						print(f"{color_print('Value:', 'red')} {eval(variable_name)}")
+
+					else:
+						print(f"{color_print('SinglePython Error:', 'red')} Variable not found")
+					break
 				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
 				elif user_input in globals() or user_input in locals():
-					# 使用eval函数对变量名进行求值，并输出结果
+					# 使用eval函数对变量名进行求值，并输出值
 					print(f"{color_print(f'Out[{input_count - 1}]:', 'blue')} {eval(user_input)}")
 				# 如果用户输入为 "cls" 或 "clear"，清屏并重置欢迎信息
 				elif user_input in ('cls', 'clear'):
