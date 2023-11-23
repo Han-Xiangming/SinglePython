@@ -174,10 +174,11 @@ def SinglePython_shell():
 					# 如果用户输入以 "?" 结尾，则尝试输出以"?"前的值为变量名的数据类型、值等信息
 					variable_name = user_input[:-1]
 					if variable_name in globals() or variable_name in locals():
+						variable_value = eval(variable_name)
 						print(f"{color_print('Name:', 'red')}  {variable_name}")
-						print(f"{color_print('Type: ', 'red')} {str(type(eval(variable_name)))[8:-2]}")
-						print(f"{color_print('Value:', 'red')} {eval(variable_name)}")
-						print(f"{color_print('Description:', 'red')} {eval(variable_name).__doc__}")
+						print(f"{color_print('Type: ', 'red')} {type(variable_value).__name__}")
+						print(f"{color_print('Value:', 'red')} {variable_value}")
+						print(f"{color_print('Description:', 'red')} {variable_value.__doc__}")
 
 					else:
 						print(f"{color_print('SinglePython Error:', 'red')} Variable not found")
