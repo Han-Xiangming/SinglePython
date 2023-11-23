@@ -12,15 +12,8 @@ def color_print(text: str, color: str) -> str:
 	:参数 text: 要打印的文本。
 	:参数 color: 文本的颜色，以字符串形式表示。
 	"""
-	colors: Dict[str, str] = {
-		'red': '\033[91m',
-		'green': '\033[92m',
-		'yellow': '\033[93m',
-		'blue': '\033[94m',
-		'magenta': '\033[95m',
-		'cyan': '\033[96m',
-		'white': '\033[97m'
-	}
+	colors: Dict[str, str] = {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 'blue': '\033[94m',
+	                          'magenta': '\033[95m', 'cyan': '\033[96m', 'white': '\033[97m'}
 
 	return colors.get(color, '') + text + '\033[0m'
 
@@ -178,6 +171,7 @@ def SinglePython_shell():
 						print(f"{color_print('Name:', 'red')}  {variable_name}")
 						print(f"{color_print('Type: ', 'red')} {type(variable_value).__name__}")
 						print(f"{color_print('Value:', 'red')} {variable_value}")
+						print(f"{color_print('Size:', 'red')}  {sys.getsizeof(variable_value)} bytes")
 						print(f"{color_print('Description:', 'red')} {variable_value.__doc__}")
 
 					else:
