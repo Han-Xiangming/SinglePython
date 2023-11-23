@@ -34,11 +34,15 @@ try:
 	from typing import Dict  # 导入 Dict 类型
 	from pathlib import Path  # 导入 Path 类型
 	from collections import deque  # 导入 deque 类型
-# 如果发生异常
-except Exception:
-	# 输出错误信息，并退出程序
-	print(f"{color_print("SinglePython Error:", 'red')} Import Error")  # 打印错误信息
-	sys.exit()  # 退出程序
+except ImportError:
+	# 捕获导入错误异常，如果导入模块失败，则打印错误信息并退出程序
+	print(f"{color_print('SinglePython Error:', 'red')} Import Error")
+	sys.exit()
+except Exception as e:
+	# 捕获其他异常，如果出现其他错误，则打印错误信息并退出程序
+	print(f"{color_print('SinglePython Error:', 'red')}", str(e))
+	sys.exit()
+
 history_list = deque()  # 创建一个空列表，用于存储历史记录
 
 
@@ -240,17 +244,17 @@ def SinglePython_shell():
 
 def read_file(file_path):
 	"""
-	    读取文件内容并返回字符串
+		读取文件内容并返回字符串
 
-	    参数:
-	        file_path (str): 文件路径
+		参数:
+			file_path (str): 文件路径
 
-	    返回值:
-	        str: 去除首尾的空格和换行符的文件内容字符串表示
+		返回值:
+			str: 去除首尾的空格和换行符的文件内容字符串表示
 
-	    异常:
-	        FileNotFoundError: 如果文件不存在或不是文件
-	    """
+		异常:
+			FileNotFoundError: 如果文件不存在或不是文件
+		"""
 	file_path = Path(file_path)
 	if not file_path.is_file():
 		raise FileNotFoundError(f"文件不存在或不是文件: {file_path}")
@@ -261,8 +265,8 @@ def read_file(file_path):
 # 定义函数 SinglePython_cmd()
 def single_python_cmd():
 	"""
-	    这个函数用于运行单个 Python 命令。
-	    它处理目录切换、文件读取和变量默认值的设置。
+		这个函数用于运行单个 Python 命令。
+		它处理目录切换、文件读取和变量默认值的设置。
 	"""
 	# 获取运行脚本的绝对路径，并将它赋值给局部变量 runpath
 	runpath = os.path.dirname(os.path.realpath(sys.argv[0]))
