@@ -41,6 +41,7 @@ except Exception:
 	sys.exit()  # 退出程序
 history_list = deque()  # 创建一个空列表，用于存储历史记录
 
+
 class SinglePythonwin:
 	def set_console_title(self):
 		"""
@@ -157,8 +158,9 @@ def SinglePython_shell():
 					multiline_input = False
 				input_count += 1  # 输入计数加一
 				history_list.append(user_input)  # 将用户输入添加到历史记录列表中
-				# 如果用户输入为 "exit"，结束程序
+
 				if user_input == "exit":
+					# 如果用户输入为 "exit"，结束程序
 					sys.exit()
 				elif user_input.startswith("!"):
 					# 如果用户输入以 "!" 开头，则执行系统命令
@@ -238,14 +240,17 @@ def SinglePython_shell():
 
 def read_file(file_path):
 	"""
-	读取文件内容并返回字符串
+	    读取文件内容并返回字符串
 
-	参数:
-	file_path (str): 文件路径
+	    参数:
+	        file_path (str): 文件路径
 
-	返回值:
-	str: 文件内容的字符串表示，去除首尾的空格和换行符
-	"""
+	    返回值:
+	        str: 去除首尾的空格和换行符的文件内容字符串表示
+
+	    异常:
+	        FileNotFoundError: 如果文件不存在或不是文件
+	    """
 	file_path = Path(file_path)
 	if not file_path.is_file():
 		raise FileNotFoundError(f"文件不存在或不是文件: {file_path}")
@@ -255,6 +260,10 @@ def read_file(file_path):
 
 # 定义函数 SinglePython_cmd()
 def single_python_cmd():
+	"""
+	    这个函数用于运行单个 Python 命令。
+	    它处理目录切换、文件读取和变量默认值的设置。
+	"""
 	# 获取运行脚本的绝对路径，并将它赋值给局部变量 runpath
 	runpath = os.path.dirname(os.path.realpath(sys.argv[0]))
 
@@ -326,14 +335,13 @@ def handle_option(opt_name, opt_value=None):
 
 	# 检查是否是指定文件执行选项
 	elif opt_name in ('-f', '--file'):
-		# 获取指定的文件路径
+		# 获取文件名，如果参数值为空则使用空字符串作为文件名
 		filename = opt_value if opt_value is not None else ''
-		try:
-			# 读取文件内容并执行
-			optreadfile_exec(filename)
-		finally:
-			# 无论是否出现异常，都要退出程序
-			sys.exit()
+		# 执行读取文件的函数
+		optreadfile_exec(filename)
+		# 程序退出
+		sys.exit()
+
 
 	else:
 		# 如果不是帮助信息选项，也不是版本信息选项，也不是指定文件执行选项，则抛出异常
