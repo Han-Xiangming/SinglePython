@@ -1,67 +1,75 @@
-SinglePythonInfo = {"ver": 0.59,  # 版本号
+SinglePythonInfo = {"version": 0.59,  # 版本号
                     "libs_warning": 1,  # 库警告
-                    "releases_ver": "official",  # 发布版本号
+                    "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
                     }
-history_list = []  # 创建一个空列表，用于存储历史记录
 
 
-def color_print(text, color):
+def color_print(text: str, color: str) -> str:
 	"""
 	以指定颜色打印文本。
 
 	:参数 text: 要打印的文本。
 	:参数 color: 文本的颜色，以字符串形式表示。
 	"""
-	colors = {
-		'red': f'\033[91m',
-		'green': f'\033[92m',
-		'yellow': f'\033[93m',
-		'blue': f'\033[94m',
-		'magenta': f'\033[95m',
-		'cyan': f'\033[96m',
-		'white': f'\033[97m'
+	colors: Dict[str, str] = {
+		'red': '\033[91m',
+		'green': '\033[92m',
+		'yellow': '\033[93m',
+		'blue': '\033[94m',
+		'magenta': '\033[95m',
+		'cyan': '\033[96m',
+		'white': '\033[97m'
 	}
 
-	if color in colors:
-		return colors[color] + text + '\033[0m'
-	else:
-		return text
+	return colors.get(color, '') + text + '\033[0m'
 
 
-# 尝试基础导入所需模块，包括 getopt, sys, platform, os
 try:
 	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 模块
 	import sys  # 导入 sys 模块
 	import platform  # 导入 platform 模块
 	import os  # 导入 os 模块
+	import importlib  # 导入 importlib 模块
+	from typing import Dict  # 导入 Dict 类型
+	from pathlib import Path  # 导入 Path 类型
+	from collections import deque  # 导入 deque 类型
 # 如果发生异常
 except Exception:
 	# 输出错误信息，并退出程序
 	print(f"{color_print("SinglePython Error:", 'red')} Import Error")  # 打印错误信息
 	sys.exit()  # 退出程序
-
+history_list = deque()  # 创建一个空列表，用于存储历史记录
 
 class SinglePythonwin:
 	def set_console_title(self):
 		"""
-		设置控制台标题
-		该方法使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数，将控制台标题设置为"SinglePython {SinglePythonInfo['ver']}"
+		设置控制台标题。
+
+		该方法使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数，将控制台标题设置为"SinglePython {SinglePythonInfo['version']}"。
 
 		参数：
-		无
+		- self: 类的实例。
 
 		返回值：
-		无
+		- 无
 		"""
+
 		import ctypes
-		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {SinglePythonInfo['ver']}")
+
+		# 获取 SinglePython 的版本
+		version = SinglePythonInfo['version']
+
+		# 使用版本号设置控制台标题
+		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {version}")
 
 
 # 定义 self_import 函数，用于自导入指定的名字空间
 def self_import(name):
-	# 使用 __import__() 内置函数导入名字空间
-	__import__(name)
+	try:
+		importlib.import_module(name)
+	except ImportError:
+		print(f"{color_print('SinglePython Error:', 'red')} Import Error")
 
 
 # 尝试自导入用户提供的库
@@ -109,7 +117,7 @@ def optreadfile_exec(filename):
 # 定义 show_startup_info 函数，用于显示欢迎信息
 def show_startup_info():
 	# 获取 SinglePython 版本
-	sp_version = f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}"
+	sp_version = f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}"
 	# 获取 Python 版本
 	py_version = platform.python_version()
 	# 获取运行环境信息
@@ -157,15 +165,18 @@ def SinglePython_shell():
 					os.system(user_input[1:])
 					break
 				elif user_input.endswith("?"):
-					# 如果用户输入以 "?" 结尾，则尝试输出以"?"前的值为变量名的数据类型，值
+					# 如果用户输入以 "?" 结尾，则尝试输出以"?"前的值为变量名的数据类型、值等信息
 					variable_name = user_input[:-1]
 					if variable_name in globals() or variable_name in locals():
+						print(f"{color_print('Name:', 'red')}  {variable_name}")
 						print(f"{color_print('Type: ', 'red')} {str(type(eval(variable_name)))[8:-2]}")
 						print(f"{color_print('Value:', 'red')} {eval(variable_name)}")
+						print(f"{color_print('Description:', 'red')} {eval(variable_name).__doc__}")
 
 					else:
 						print(f"{color_print('SinglePython Error:', 'red')} Variable not found")
 					break
+
 				# 如果用户输入的为已定义的变量名，则尝试输出该变量的值。
 				elif user_input in globals() or user_input in locals():
 					# 使用eval函数对变量名进行求值，并输出值
@@ -235,16 +246,18 @@ def read_file(file_path):
 	返回值:
 	str: 文件内容的字符串表示，去除首尾的空格和换行符
 	"""
-	if not os.path.isfile(file_path):
-		raise FileNotFoundError("文件不存在或不是文件: {}".format(file_path))
-	with open(file_path, "r") as f:
-		return f.read().strip()
+	file_path = Path(file_path)
+	if not file_path.is_file():
+		raise FileNotFoundError(f"文件不存在或不是文件: {file_path}")
+	with file_path.open("r") as file:
+		return file.read().strip()
 
 
 # 定义函数 SinglePython_cmd()
-def SinglePython_cmd():
+def single_python_cmd():
 	# 获取运行脚本的绝对路径，并将它赋值给局部变量 runpath
 	runpath = os.path.dirname(os.path.realpath(sys.argv[0]))
+
 	try:
 		# 尝试进入以下两个目录：
 		# 1. "{runpath}/SinglePython_files/userdata/"
@@ -258,11 +271,12 @@ def SinglePython_cmd():
 			initcmd = input("(InstallationENV) ")
 			if initcmd == 'exit':
 				exit()
+
 	try:
 		# 读取默认登录用户文件，获取用户名并去除首尾空格
-		defaultloginuser_file = read_file(f"{runpath}/SinglePython_files/userdata/defaultloginuser").strip()
+		default_login_user_file = read_file(f"{runpath}/SinglePython_files/userdata/defaultloginuser").strip()
 		# 创建用户主目录，如果不存在则创建
-		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{defaultloginuser_file}", exist_ok=True)
+		os.makedirs(f"{runpath}/SinglePython_files/userdata/home/{default_login_user_file}", exist_ok=True)
 	except FileNotFoundError:
 		# 捕获文件不存在的异常，设置默认用户名为'user'
 		cmd_username = 'user'
@@ -288,18 +302,28 @@ Options:
 
 # 定义函数handle_option，用于处理命令行选项
 def handle_option(opt_name, opt_value=None):
+	"""
+	根据选项名称处理不同的选项。
+
+	参数:
+		opt_name (str): 选项的名称。
+		opt_value (str, 可选): 与选项关联的值。默认为 None。
+	"""
+
 	# 检查是否是帮助信息选项
 	if opt_name in ('-h', '--help'):
 		# 打印帮助信息并退出程序
 		print(helpinfo)
 		sys.exit(0)
+
 	# 检查是否是版本信息选项
 	elif opt_name in ('-v', '--version'):
 		# 打印版本信息并退出程序
 		print(color_print(
-			f"SinglePython {SinglePythonInfo['ver']}-{SinglePythonInfo['releases_ver']}, powered by Python {platform.python_version()}",
+			f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, 使用 Python {platform.python_version()}",
 			'cyan'))
 		sys.exit(0)
+
 	# 检查是否是指定文件执行选项
 	elif opt_name in ('-f', '--file'):
 		# 获取指定的文件路径
@@ -310,6 +334,7 @@ def handle_option(opt_name, opt_value=None):
 		finally:
 			# 无论是否出现异常，都要退出程序
 			sys.exit()
+
 	else:
 		# 如果不是帮助信息选项，也不是版本信息选项，也不是指定文件执行选项，则抛出异常
 		raise GetoptError(opt_name)
@@ -323,7 +348,7 @@ try:
 	-f 对应 --file=，后面可以接一个文件名作为参数
 	-v 对应 --version，用于显示版本信息
 	"""
-	opts, args = getopt(sys.argv[1:], '-hf:-v', ['help', 'file=', 'version'])
+	opts, args = getopt(sys.argv[1:], 'hf:v', ['help', 'file=', 'version'])
 	# 遍历opts中的每个元素（一个元组），将每个元组的第一个元素作为参数传递给handle_option函数
 	for opt_name, opt_value in opts:
 		handle_option(opt_name, opt_value)
@@ -341,7 +366,7 @@ try:
 	show_startup_info()
 	# 直接进入 SinglePython_shell 主界面
 	SinglePython_shell()
-except Exception:
+except Exception as e:
 	# 如果发生任何异常，打印错误信息并退出程序
-	print(color_print("An error occurred:", 'red'), sys.exc_info()[0])
+	print(color_print("An error occurred:", 'red'), e)
 	sys.exit(1)
