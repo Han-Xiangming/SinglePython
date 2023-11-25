@@ -99,7 +99,7 @@ def show_startup_info():
 
 	# 打印欢迎信息
 	# 使用格式化字符串将 sp 版本、Python 版本和环境信息组合成欢迎信息
-	welcome_message = f"{sp_version} (Python 版本: {py_version}) {env_info}"
+	welcome_message = f"{sp_version} (Python Version: {py_version}) {env_info}"
 	# 将欢迎信息使用颜色设置为青色
 	colored_message = color_print(welcome_message, 'cyan')
 	# 打印带有颜色的欢迎信息
