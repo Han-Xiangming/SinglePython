@@ -1,4 +1,4 @@
-SinglePythonInfo = {"version": 0.59,  # 版本号
+SinglePythonInfo = {"version": 0.60,  # 版本号
                     "libs_warning": 1,  # 库警告
                     "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
@@ -23,7 +23,6 @@ try:
 	import sys  # 导入 sys 模块
 	import platform  # 导入 platform 模块
 	import os  # 导入 os 模块
-	import importlib  # 导入 importlib 模块
 	from typing import Dict  # 导入 Dict 类型
 	from pathlib import Path  # 导入 Path 类型
 	from collections import deque  # 导入 deque 类型
@@ -33,7 +32,7 @@ except ImportError:
 	sys.exit()
 except Exception as e:
 	# 捕获其他异常，如果出现其他错误，则打印错误信息并退出程序
-	print(f"{color_print('SinglePython Error:', 'red')}", str(e))
+	print(f"{color_print('SinglePython Error:', 'red')} {str(e)}")
 	sys.exit()
 
 history_list = deque()  # 创建一个空列表，用于存储历史记录
@@ -42,9 +41,7 @@ history_list = deque()  # 创建一个空列表，用于存储历史记录
 class SinglePythonwin:
 	def set_console_title(self):
 		"""
-		设置控制台标题。
-
-		该方法使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数，将控制台标题设置为"SinglePython {SinglePythonInfo['version']}"。
+		设置控制台标题为"SinglePython {version}"，使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数。
 
 		参数：
 		- self: 类的实例。
@@ -60,27 +57,6 @@ class SinglePythonwin:
 
 		# 使用版本号设置控制台标题
 		ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {version}")
-
-
-# 定义 self_import 函数，用于自导入指定的名字空间
-def self_import(name):
-	try:
-		importlib.import_module(name)
-	except ImportError:
-		print(f"{color_print('SinglePython Error:', 'red')} Import Error")
-
-
-# 尝试自导入用户提供的库
-try:
-	self_import(SinglePythonInfo["importlibs"])
-# 如果引发 ImportError 异常
-except ImportError:
-	# 如果 SinglePythonInfo 字典中的 "libs_warning" 键的值为 1 ，则执行下面的代码块
-	if SinglePythonInfo["libs_warning"] == 1:
-		# 打印警告信息，提示自定义导入的库不存在，请检查源代码库配置并重新构建
-		print(
-			f"033[{color_print("SinglePython Warning:", 'yellow')} 自定义导入库 {SinglePythonInfo["importlibs"]} 不存在，请检查源代码库配置并重新构建")
-		print("")
 
 
 # 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
@@ -375,5 +351,5 @@ try:
 	SinglePython_shell()
 except Exception as e:
 	# 如果发生任何异常，打印错误信息并退出程序
-	print(color_print("An error occurred:", 'red'), e)
+	print(f"{color_print("An error occurred:", 'red')} {str(e)}")
 	sys.exit(1)
