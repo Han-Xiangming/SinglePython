@@ -90,6 +90,22 @@ def optreadfile_exec(filename: str) -> None:
 
 # 定义 show_startup_info 函数，用于显示欢迎信息
 def show_startup_info():
+	"""
+	打印程序的启动信息。
+
+	- 从 'SinglePythonInfo' 字典中获取 SinglePython 版本。
+	- 使用 'platform.python_version()' 函数获取 Python 版本。
+	- 使用 'platform.platform()' 和 'platform.version()' 函数获取运行环境信息。
+	- 将 SinglePython 版本、Python 版本和环境信息组合成欢迎信息。
+	- 使用 'color_print' 函数将欢迎信息的颜色设置为青色。
+	- 打印带有颜色的欢迎信息。
+
+	参数：
+	无
+
+	返回值：
+	无
+	"""
 	# 获取 SinglePython 版本
 	sp_version = f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}"
 	# 获取 Python 版本
@@ -108,6 +124,16 @@ def show_startup_info():
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
 def SinglePython_shell():
+	"""
+	该函数负责创建一个Python Shell。它接受用户输入，执行输入，
+	并提供交互功能，如多行输入、历史记录跟踪、变量检查、清屏、执行系统命令等等。
+
+	参数:
+	无
+
+	返回:
+	无
+	"""
 	input_count = 1  # 设置输入计数为1
 	# 循环接收用户输入并执行
 	while True:
