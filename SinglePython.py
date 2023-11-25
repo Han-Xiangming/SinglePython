@@ -1,4 +1,4 @@
-SinglePythonInfo = {"version": 0.60,  # 版本号
+SinglePythonInfo = {"version": 0.61,  # 版本号
                     "libs_warning": 1,  # 库警告
                     "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
@@ -60,11 +60,11 @@ class SinglePythonwin:
 
 
 # 定义 optreadfile_exec 函数，用于运行指定文件中的 Python 代码
-def optreadfile_exec(filename):
+def optreadfile_exec(filename: str) -> None:
 	"""
 	在指定文件中运行 Python 代码
 
-	:参数 filename： 字符串 包含 Python 代码的文件的名称
+	:参数 filename： 字符串 包含 Python 代码的文件的名称 (str)
 	:返回: None
 	"""
 	if not os.path.isfile(filename):
@@ -98,7 +98,12 @@ def show_startup_info():
 	env_info = f" [Running on {platform.platform()} {platform.version()}]"
 
 	# 打印欢迎信息
-	print(f"{color_print(f'{sp_version} (Python Version: {py_version}) {env_info}', 'cyan')}")
+	# 使用格式化字符串将 sp 版本、Python 版本和环境信息组合成欢迎信息
+	welcome_message = f"{sp_version} (Python 版本: {py_version}) {env_info}"
+	# 将欢迎信息使用颜色设置为青色
+	colored_message = color_print(welcome_message, 'cyan')
+	# 打印带有颜色的欢迎信息
+	print(colored_message)
 
 
 # 定义 SinglePython_shell 函数，提供交互式 Python 解释器
@@ -285,7 +290,7 @@ Options:
 
 
 # 定义函数handle_option，用于处理命令行选项
-def handle_option(opt_name, opt_value=None):
+def handle_option(opt_name: str, opt_value: str = None) -> None:
 	"""
 	根据选项名称处理不同的选项。
 
@@ -316,7 +321,6 @@ def handle_option(opt_name, opt_value=None):
 		optreadfile_exec(filename)
 		# 程序退出
 		sys.exit()
-
 
 	else:
 		# 如果不是帮助信息选项，也不是版本信息选项，也不是指定文件执行选项，则抛出异常
