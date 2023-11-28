@@ -374,12 +374,13 @@ except GetoptError as err:
 	# 退出程序
 	sys.exit(2)  # 参数错误时，程序异常结束，返回值为2
 
-try:
-	# 显示欢迎文本
-	show_startup_info()
-	# 直接进入 SinglePython_shell 主界面
-	SinglePython_shell()
-except Exception as e:
-	# 如果发生任何异常，打印错误信息并退出程序
-	print(f"{color_print("An error occurred:", 'red')} {str(e)}")
-	sys.exit(1)
+if __name__ == '__main__':
+	try:
+		# 显示欢迎文本
+		show_startup_info()
+		# 直接进入 SinglePython_shell 主界面
+		SinglePython_shell()
+	except Exception as e:
+		# 如果发生任何异常，打印错误信息并退出程序
+		print(f"{color_print("An error occurred:", 'red')} {str(e)}")
+		sys.exit(1)
