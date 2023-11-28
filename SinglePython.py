@@ -333,10 +333,9 @@ def handle_option(opt_name: str, opt_value: str = None) -> None:
 
 	# 检查是否是版本信息选项
 	elif opt_name in ('-v', '--version'):
+		version_info = f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}"
 		# 打印版本信息并退出程序
-		print(color_print(
-			f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}",
-			'cyan'))
+		print(color_print(version_info, 'cyan'))
 		sys.exit(0)
 
 	# 检查是否是指定文件执行选项
