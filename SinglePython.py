@@ -335,7 +335,7 @@ def handle_option(opt_name: str, opt_value: str = None) -> None:
 	elif opt_name in ('-v', '--version'):
 		# 打印版本信息并退出程序
 		print(color_print(
-			f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, 使用 Python {platform.python_version()}",
+			f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}",
 			'cyan'))
 		sys.exit(0)
 
