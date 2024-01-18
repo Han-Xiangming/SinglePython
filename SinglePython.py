@@ -1,22 +1,17 @@
-SinglePythonInfo = {"version": 0.62,  # 版本号
+SinglePythonInfo = {"version": 0.63,  # 版本号
                     "libs_warning": 1,  # 库警告
                     "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
                     }
+import functools
 
+# 颜色映射表
+color_map = {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 'blue': '\033[94m', 'magenta': '\033[95m',
+             'cyan': '\033[96m', 'white': '\033[97m'}
 
-def color_print(text: str, color: str) -> str:
-	"""
-	以指定颜色打印文本。
-
-	:参数 text: 要打印的文本。
-	:参数 color: 文本的颜色，以字符串形式表示。
-	"""
-	colors: Dict[str, str] = {'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m', 'blue': '\033[94m',
-	                          'magenta': '\033[95m', 'cyan': '\033[96m', 'white': '\033[97m'}
-
-	return colors.get(color, '') + text + '\033[0m'
-
+# 使用functools.lru_cache装饰器对全局变量进行装饰
+# lru_cache(maxsize=None)表示缓存大小无限制
+color_print = functools.lru_cache(maxsize=None)(lambda text, color: color_map.get(color, '') + text + '\033[0m')
 
 try:
 	from getopt import getopt, GetoptError  # 导入 getopt 和 GetoptError 模块
@@ -26,6 +21,8 @@ try:
 	from typing import Dict  # 导入 Dict 类型
 	from pathlib import Path  # 导入 Path 类型
 	from collections import deque  # 导入 deque 类型
+
+	history_list = deque()  # 创建一个空列表，用于存储历史记录
 except ImportError:
 	# 捕获导入错误异常，如果导入模块失败，则打印错误信息并退出程序
 	print(f"{color_print('SinglePython Error:', 'red')} Import Error")
@@ -34,8 +31,6 @@ except Exception as e:
 	# 捕获其他异常，如果出现其他错误，则打印错误信息并退出程序
 	print(f"{color_print('SinglePython Error:', 'red')} {str(e)}")
 	sys.exit()
-
-history_list = deque()  # 创建一个空列表，用于存储历史记录
 
 
 class SinglePythonwin:
@@ -246,22 +241,31 @@ def SinglePython_shell():
 
 def read_file(file_path):
 	"""
-		读取文件内容并返回字符串
+	读取文件内容并返回去除首尾空格和换行符的字符串。
 
-		参数:
-			file_path (str): 文件路径
+	参数:
+		file_path (str): 文件路径
 
-		返回值:
-			str: 去除首尾的空格和换行符的文件内容字符串表示
+	返回值:
+		str: 去除首尾空格和换行符的文件内容字符串表示
 
-		异常:
-			FileNotFoundError: 如果文件不存在或不是文件
-		"""
+	异常:
+		FileNotFoundError: 如果文件不存在或不是文件
+	"""
+	# 使用Path对象处理文件路径
 	file_path = Path(file_path)
+
+	# 检查文件是否存在
 	if not file_path.is_file():
 		raise FileNotFoundError(f"文件不存在或不是文件: {file_path}")
-	with file_path.open("r") as file:
-		return file.read().strip()
+
+	# 使用open函数以只读模式打开文件，获取文件内容
+	# 由于open返回的是一个文件对象，需要通过read方法读取文件内容，再通过strip方法去除首尾空格和换行符
+	with open(file_path, 'r') as file:
+		# 直接在字符串级别上操作，去掉首尾空格和换行符
+		content = file.read().strip()
+
+	return content
 
 
 # 定义函数 SinglePython_cmd()
