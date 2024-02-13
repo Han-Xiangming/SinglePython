@@ -310,11 +310,9 @@ def SinglePython_shell():
 					exec('\n'.join(buffered_code))
 					# print(f"Executed code: {'\n'.join(buffered_code)}")
 					buffered_code.clear()
-					print(' ')
 				except Exception as e:
 					buffered_code.clear()
 					print(str(e))
-					print(' ')
 					continue
 			else:
 				prompt_message = '   ...:'
@@ -323,7 +321,6 @@ def SinglePython_shell():
 			# 中止执行
 			buffered_code.clear()
 			print("\nKeyboardInterrupt")
-			print(' ')
 			input_count += 1
 			prompt_message = f"In [{input_count}]: "
 			continue
