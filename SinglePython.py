@@ -184,6 +184,24 @@ def are_brackets_complete(code):
 	return not stack  # 如果栈为空，则所有括号都已正确闭合
 
 
+def is_assignment_statement(code):
+	"""
+	判断给定的代码片段是否为赋值语句。
+
+	:param code: 要检查的Python代码字符串
+	:return: 如果是赋值语句则返回True，否则返回False
+	"""
+	try:
+		# 解析代码片段
+		parsed = ast.parse(code)
+
+		# 检查根节点是否为赋值节点
+		return isinstance(parsed.body[0], ast.Assign)
+	except SyntaxError:
+		# 如果存在语法错误，则不是有效的赋值语句
+		return False
+
+
 def handle_tab(event):
 	"""
 	处理Tab键的按键事件。
@@ -300,9 +318,15 @@ def SinglePython_shell():
 				continue
 			# 添加代码到缓冲区
 			buffered_code.append(text)
+			if is_assignment_statement(buffered_code[0]):
+				input_count += 1
+				prompt_message = f"In [{input_count}]: "
+				exec(buffered_code[0])
+				continue
 			# 检查代码是否完整
 			if (is_valid_python_code(''.join(buffered_code)) and are_brackets_complete(
-					''.join(buffered_code))) or text == '' or 'import' in text:
+					''.join(buffered_code))) or is_assignment_statement(
+				buffered_code[0]) or text == '' or 'import' in text:
 				# 执行代码并重置提示符和缓冲区
 				input_count += 1
 				prompt_message = f"In [{input_count}]: "
