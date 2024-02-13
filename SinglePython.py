@@ -3,7 +3,7 @@ SinglePythonInfo = {"version": 0.74,  # 版本号
                     "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
                     }
-import argparse
+
 import ast
 import builtins
 import functools
@@ -11,6 +11,7 @@ import keyword
 import os
 import platform
 import sys
+from argparse import ArgumentParser
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
@@ -75,11 +76,15 @@ class SinglePythonwin:
 
 # 生成包含所有内置函数和关键字的列表
 def get_builtin_names_and_keywords():
+	# 获取所有内置函数和关键字的名称
 	builtin_names = [name for name in dir(builtins) if not name.startswith("__")]
+	# 获取所有关键字
 	keywords = list(keyword.kwlist)
+	# 返回内置函数和关键字的列表
 	return builtin_names + keywords
 
 
+# 创建一个词补全器对象
 completer = WordCompleter(get_builtin_names_and_keywords(), ignore_case=True)
 
 # 缓存用户输入的代码片段
@@ -239,7 +244,7 @@ def handle_tab_key(event):
 
 
 def main():
-	parser = argparse.ArgumentParser(description='Interactive Python Shell with additional features.')
+	parser = ArgumentParser(description='Interactive Python Shell with additional features.')
 	parser.add_argument('-f', '--file', type=str, help='Execute Python code from the specified file')
 	parser.add_argument('-i', '--interactive', action='store_true',
 	                    help='Enter interactive mode after executing a file.')
