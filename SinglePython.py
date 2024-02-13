@@ -1,4 +1,4 @@
-SinglePythonInfo = {"version": 0.73,  # 版本号
+SinglePythonInfo = {"version": 0.74,  # 版本号
                     "libs_warning": 1,  # 库警告
                     "releases_version": "official",  # 发布版本号
                     "importlibs": "os"  # 导入的库信息
