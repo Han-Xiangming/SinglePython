@@ -1,9 +1,8 @@
-SinglePythonInfo = {
-    "version": 0.77,  # 版本号
-    "libs_warning": 1,  # 库警告
-    "releases_version": "official",  # 发布版本号
-    "importlibs": "os",  # 导入的库信息
-}
+SinglePythonInfo = {"version": 0.77,  # 版本号
+                    "libs_warning": 1,  # 库警告
+                    "releases_version": "official",  # 发布版本号
+                    "importlibs": "os",  # 导入的库信息
+                    }
 
 import ast
 import builtins
@@ -19,9 +18,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.key_binding.bindings.completion import (
-    display_completions_like_readline,
-)
+from prompt_toolkit.key_binding.bindings.completion import (display_completions_like_readline, )
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from pygments.lexers import PythonLexer
@@ -32,57 +29,50 @@ init()
 
 def color_print(text, color):
     """
-    根据给定的颜色，将文本以指定颜色输出。
+	根据给定的颜色，将文本以指定颜色输出。
 
-    参数：
-    text (str): 需要输出的文本。
-    color (str): 颜色名称，可选值为 "red"、"green"、"yellow"、"blue"、"magenta"、"cyan"、"white"。
+	参数：
+	text (str): 需要输出的文本。
+	color (str): 颜色名称，可选值为 "red"、"green"、"yellow"、"blue"、"magenta"、"cyan"、"white"。
 
-    返回：
-    str: 指定颜色的文本。
+	返回：
+	str: 指定颜色的文本。
 
-    """
+	"""
 
-    color_dict = {
-        "red": Fore.RED,
-        "green": Fore.GREEN,
-        "yellow": Fore.YELLOW,
-        "blue": Fore.BLUE,
-        "magenta": Fore.MAGENTA,
-        "cyan": Fore.CYAN,
-        "white": Fore.WHITE,
-    }
+    color_dict = {"red": Fore.RED, "green": Fore.GREEN, "yellow": Fore.YELLOW, "blue": Fore.BLUE,
+                  "magenta": Fore.MAGENTA, "cyan": Fore.CYAN, "white": Fore.WHITE, }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
 
 
 def get_version():
     """
-    获取当前版本号
+	获取当前版本号
 
-    :返回: 当前版本号 (str)
-    """
+	:返回: 当前版本号 (str)
+	"""
     return f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}"
 
 
 class SinglePythonwin:
     """
-    SinglePythonwin 类用于设置控制台标题。
+	SinglePythonwin 类用于设置控制台标题。
 
-    使用方法：
-    single_python = SinglePythonwin()
-    single_python.set_console_title()
-    """
+	使用方法：
+	single_python = SinglePythonwin()
+	single_python.set_console_title()
+	"""
 
     def set_console_title(self):
         """
-        设置控制台标题为"SinglePython {version}"，使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数。
+		设置控制台标题为"SinglePython {version}"，使用ctypes库调用kernel32.dll中的SetConsoleTitleW函数。
 
-        参数：
-        - self: 类的实例。
+		参数：
+		- self: 类的实例。
 
-        返回值：
-        - 无
-        """
+		返回值：
+		- 无
+		"""
 
         import ctypes
 
@@ -93,13 +83,9 @@ class SinglePythonwin:
             # 使用版本号设置控制台标题
             ctypes.windll.kernel32.SetConsoleTitleW(f"SinglePython {version}")
         except KeyError:
-            print(
-                f"{color_print('Error:', 'red')} SinglePythonInfo dictionary does not contain 'version' key."
-            )
+            print(f"{color_print('Error:', 'red')} SinglePythonInfo dictionary does not contain 'version' key.")
         except ctypes.WinError as e:
-            print(
-                f"{color_print('Error:', 'red')} Failed to set console title. Error: {e}"
-            )
+            print(f"{color_print('Error:', 'red')} Failed to set console title. Error: {e}")
 
 
 # 生成包含所有内置函数和关键字的列表
@@ -121,11 +107,11 @@ buffered_code = []
 
 def optreadfile_exec(filename: str) -> None:
     """
-    在指定文件中运行 Python 代码
+	在指定文件中运行 Python 代码
 
-    :参数 filename： 字符串 包含 Python 代码的文件的名称 (str)
-    :返回: None
-    """
+	:参数 filename： 字符串 包含 Python 代码的文件的名称 (str)
+	:返回: None
+	"""
     if not os.path.isfile(filename):
         # 如果指定文件不存在
         print(f"{color_print('SinglePython Error:', 'red')} File not found")
@@ -138,9 +124,7 @@ def optreadfile_exec(filename: str) -> None:
         # 执行编译后的代码
         exec(code)
         print(" ")
-        print(
-            f"{color_print('SinglePython Info:', 'magenta')} {filename} executed successfully"
-        )
+        print(f"{color_print('SinglePython Info:', 'magenta')} {filename} executed successfully")
     except SyntaxError:
         # 如果存在语法错误
         print(f"{color_print('SyntaxError:', 'red')} Syntax error in the Python code")
@@ -151,21 +135,21 @@ def optreadfile_exec(filename: str) -> None:
 
 def show_startup_info():
     """
-    打印程序的启动信息。
+	打印程序的启动信息。
 
-    - 从 'SinglePythonInfo' 字典中获取 SinglePython 版本。
-    - 使用 'platform.python_version()' 函数获取 Python 版本。
-    - 使用 'platform.platform()' 和 'platform.version()' 函数获取运行环境信息。
-    - 将 SinglePython 版本、Python 版本和环境信息组合成欢迎信息。
-    - 使用 'color_print' 函数将欢迎信息的颜色设置为青色。
-    - 打印带有颜色的欢迎信息。
+	- 从 'SinglePythonInfo' 字典中获取 SinglePython 版本。
+	- 使用 'platform.python_version()' 函数获取 Python 版本。
+	- 使用 'platform.platform()' 和 'platform.version()' 函数获取运行环境信息。
+	- 将 SinglePython 版本、Python 版本和环境信息组合成欢迎信息。
+	- 使用 'color_print' 函数将欢迎信息的颜色设置为青色。
+	- 打印带有颜色的欢迎信息。
 
-    参数：
-    无
+	参数：
+	无
 
-    返回值：
-    无
-    """
+	返回值：
+	无
+	"""
     # 获取 SinglePython 版本
     sp_version = f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}"
     # 获取 Python 版本
@@ -184,11 +168,11 @@ def show_startup_info():
 
 def is_valid_python_code(code):
     """
-    检查给定的代码是否是有效的Python代码。
+	检查给定的代码是否是有效的Python代码。
 
-    :param code: 要检查的Python代码字符串
-    :return: 如果代码是有效的Python代码则返回True，否则返回False
-    """
+	:param code: 要检查的Python代码字符串
+	:return: 如果代码是有效的Python代码则返回True，否则返回False
+	"""
     try:
         return ast.parse(code, mode="eval").body is not None
     except SyntaxError as e:
@@ -199,11 +183,11 @@ def is_valid_python_code(code):
 
 def are_brackets_complete(code):
     """
-    检查给定的代码中的括号是否完整。
+	检查给定的代码中的括号是否完整。
 
-    :param code: 要检查的Python代码字符串
-    :return: 如果所有括号都已正确闭合则返回True，否则返回False
-    """
+	:param code: 要检查的Python代码字符串
+	:return: 如果所有括号都已正确闭合则返回True，否则返回False
+	"""
     open_brackets = {"(", "[", "{"}
     close_brackets = {")", "]", "}"}
     bracket_map = {")": "(", "]": "[", "}": "{"}
@@ -221,11 +205,11 @@ def are_brackets_complete(code):
 
 def is_assignment_statement(code):
     """
-    判断给定的代码片段是否为赋值语句。
+	判断给定的代码片段是否为赋值语句。
 
-    :param code: 要检查的Python代码字符串
-    :return: 如果是赋值语句则返回True，否则返回False
-    """
+	:param code: 要检查的Python代码字符串
+	:return: 如果是赋值语句则返回True，否则返回False
+	"""
     try:
         # 解析代码片段
         parsed = ast.parse(code)
@@ -239,17 +223,15 @@ def is_assignment_statement(code):
 
 def handle_tab(event):
     """
-    处理Tab键的按键事件。
+	处理Tab键的按键事件。
 
-    如果光标位置在文本的开头或者前一个字符是换行符或空格，插入四个空格。
-    否则，调用display_completions_like_readline函数。
+	如果光标位置在文本的开头或者前一个字符是换行符或空格，插入四个空格。
+	否则，调用display_completions_like_readline函数。
 
-    :param event: 包含按键事件信息的对象
-    """
+	:param event: 包含按键事件信息的对象
+	"""
     buffer = event.app.current_buffer
-    if buffer.cursor_position == 0 or buffer.document.text[
-        buffer.cursor_position - 1
-    ] in ("\n", " "):
+    if buffer.cursor_position == 0 or buffer.document.text[buffer.cursor_position - 1] in ("\n", " "):
         buffer.insert_text(" " * 4)
     else:
         display_completions_like_readline(event)
@@ -263,10 +245,10 @@ bindings = KeyBindings()
 @bindings.add(Keys.Tab)
 def handle_tab_key(event):
     """
-    处理Tab键的事件。
+	处理Tab键的事件。
 
-    :param event: 事件对象，包含按键信息
-    """
+	:param event: 事件对象，包含按键信息
+	"""
     handle_tab(event)
 
 
@@ -277,25 +259,11 @@ def increment_prompt(input_count):
 
 
 def main():
-    parser = ArgumentParser(
-        description="Interactive Python Shell with additional features."
-    )
-    parser.add_argument(
-        "-f", "--file", type=str, help="Execute Python code from the specified file"
-    )
-    parser.add_argument(
-        "-i",
-        "--interactive",
-        action="store_true",
-        help="Enter interactive mode after executing a file.",
-    )
-    parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
-        version=get_version(),
-        help="Show version information",
-    )
+    parser = ArgumentParser(description="Interactive Python Shell with additional features.")
+    parser.add_argument("-f", "--file", type=str, help="Execute Python code from the specified file")
+    parser.add_argument("-i", "--interactive", action="store_true",
+                        help="Enter interactive mode after executing a file.", )
+    parser.add_argument("-v", "--version", action="version", version=get_version(), help="Show version information", )
     args = parser.parse_args()
     if args.file:
         optreadfile_exec(args.file)
@@ -309,21 +277,16 @@ def main():
 
 def SinglePython_shell():
     """
-    创建一个交互式 Python 命令行界面。
-    """
+	创建一个交互式 Python 命令行界面。
+	"""
     # 显示欢迎文本
     show_startup_info()
     # 创建一个PromptSession实例并配置历史记录、自动补全（包括WordCompleter）、语法高亮等
     lexer = PygmentsLexer(PythonLexer)
     history = InMemoryHistory()
     # 添加自定义按键绑定到PromptSession实例
-    session = PromptSession(
-        lexer=lexer,
-        auto_suggest=AutoSuggestFromHistory(),
-        completer=completer,
-        history=history,
-        key_bindings=bindings,
-    )
+    session = PromptSession(lexer=lexer, auto_suggest=AutoSuggestFromHistory(), completer=completer, history=history,
+                            key_bindings=bindings, )
     # 初始提示符
     input_count = 1
     prompt_message = f"In [{input_count}]: "
@@ -349,21 +312,13 @@ def SinglePython_shell():
                 if variable_name in globals() or variable_name in locals():
                     variable_value = eval(variable_name)
                     print(f"{color_print('Name:', 'red')}  {variable_name}")
-                    print(
-                        f"{color_print('Type: ', 'red')} {type(variable_value).__name__}"
-                    )
+                    print(f"{color_print('Type: ', 'red')} {type(variable_value).__name__}")
                     print(f"{color_print('Value:', 'red')} {variable_value}")
-                    print(
-                        f"{color_print('Size:', 'red')}  {sys.getsizeof(variable_value)} bytes"
-                    )
-                    print(
-                        f"{color_print('Description:', 'red')} {variable_value.__doc__}"
-                    )
+                    print(f"{color_print('Size:', 'red')}  {sys.getsizeof(variable_value)} bytes")
+                    print(f"{color_print('Description:', 'red')} {variable_value.__doc__}")
                     print("\n")
                 else:
-                    print(
-                        f"{color_print('SinglePython Error:', 'red')} Variable not found"
-                    )
+                    print(f"{color_print('SinglePython Error:', 'red')} Variable not found")
                 input_count, prompt_message = increment_prompt(input_count)
                 continue
             elif text in globals() or text in locals():
@@ -382,15 +337,9 @@ def SinglePython_shell():
                 exec(buffered_code[0])
                 continue
             # 检查代码是否完整
-            if (
-                (
-                    is_valid_python_code("".join(buffered_code))
-                    and are_brackets_complete("".join(buffered_code))
-                )
-                or is_assignment_statement(buffered_code[0])
-                or text == ""
-                or "import" in text
-            ):
+            if ((is_valid_python_code("".join(buffered_code)) and are_brackets_complete(
+                    "".join(buffered_code))) or is_assignment_statement(
+                buffered_code[0]) or text == "" or "import" in text):
                 # 执行代码并重置提示符和缓冲区
                 input_count, prompt_message = increment_prompt(input_count)
                 try:
