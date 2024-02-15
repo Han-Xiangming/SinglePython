@@ -1,5 +1,5 @@
 SinglePythonInfo = {
-    "version": 0.75,  # 版本号
+    "version": 0.76,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
@@ -19,7 +19,7 @@ from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.bindings.completion import (
-	display_completions_like_readline,
+    display_completions_like_readline,
 )
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
@@ -27,6 +27,18 @@ from pygments.lexers import PythonLexer
 
 
 def color_print(text, color):
+    """
+    根据给定的颜色，将文本以指定颜色输出。
+
+    参数：
+    text (str): 需要输出的文本。
+    color (str): 颜色名称，可选值为 "red"、"green"、"yellow"、"blue"、"magenta"、"cyan"、"white"。
+
+    返回：
+    str: 指定颜色的文本。
+
+    """
+
     from colorama import Fore, Style, init
 
     init()
@@ -40,6 +52,7 @@ def color_print(text, color):
         "white": Fore.WHITE,
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
+
 
 
 def get_version():
@@ -224,6 +237,29 @@ def is_assignment_statement(code):
         return False
 
 
+# def handle_tab(event):
+#     """
+#     处理Tab键的按键事件。
+#
+#     如果光标位置在文本的开头或者前一个字符是换行符或空格，插入四个空格。
+#     否则，调用display_completions_like_readline函数。
+#
+#     :param event: 包含按键事件信息的对象
+#     """
+#     # 确保event.app.current_buffer和buff.document.text是有效的引用
+#     buffer = event.app.current_buffer
+#     cursor_position = buffer.cursor_position
+#     document_text = buffer.document.text
+#
+#     if cursor_position == 0 or (
+#         cursor_position > 0 and document_text[cursor_position - 1] in ("\n", " ")
+#     ):
+#         buffer.insert_text(" " * 4)  # 假设每个缩进级别为4个空格
+#     else:
+#         # 确保display_completions_like_readline函数在当前上下文中是可用的
+#         display_completions_like_readline(event)
+
+
 def handle_tab(event):
     """
     处理Tab键的按键事件。
@@ -233,17 +269,12 @@ def handle_tab(event):
 
     :param event: 包含按键事件信息的对象
     """
-    # 确保event.app.current_buffer和buff.document.text是有效的引用
     buffer = event.app.current_buffer
-    cursor_position = buffer.cursor_position
-    document_text = buffer.document.text
-
-    if cursor_position == 0 or (
-        cursor_position > 0 and document_text[cursor_position - 1] in ("\n", " ")
-    ):
-        buffer.insert_text(" " * 4)  # 假设每个缩进级别为4个空格
+    if buffer.cursor_position == 0 or buffer.document.text[
+        buffer.cursor_position - 1
+    ] in ("\n", " "):
+        buffer.insert_text(" " * 4)
     else:
-        # 确保display_completions_like_readline函数在当前上下文中是可用的
         display_completions_like_readline(event)
 
 
