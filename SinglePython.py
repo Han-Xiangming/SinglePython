@@ -1,5 +1,5 @@
 SinglePythonInfo = {
-    "version": 0.76,  # 版本号
+    "version": 0.77,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
@@ -13,6 +13,7 @@ import platform
 import sys
 from argparse import ArgumentParser
 
+from colorama import Fore, Style, init
 from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
@@ -24,6 +25,9 @@ from prompt_toolkit.key_binding.bindings.completion import (
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from pygments.lexers import PythonLexer
+
+# 初始化 colorama
+init()
 
 
 def color_print(text, color):
@@ -39,9 +43,6 @@ def color_print(text, color):
 
     """
 
-    from colorama import Fore, Style, init
-
-    init()
     color_dict = {
         "red": Fore.RED,
         "green": Fore.GREEN,
@@ -52,7 +53,6 @@ def color_print(text, color):
         "white": Fore.WHITE,
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
-
 
 
 def get_version():
@@ -146,7 +146,7 @@ def optreadfile_exec(filename: str) -> None:
         print(f"{color_print('SyntaxError:', 'red')} Syntax error in the Python code")
     except Exception as e:
         # 如果存在其他异常
-        print(f"{color_print('SinglePython Error:', 'red')}", str(e))
+        print(f"{color_print('SinglePython Error:', 'red')}", e)
 
 
 def show_startup_info():
@@ -237,29 +237,6 @@ def is_assignment_statement(code):
         return False
 
 
-# def handle_tab(event):
-#     """
-#     处理Tab键的按键事件。
-#
-#     如果光标位置在文本的开头或者前一个字符是换行符或空格，插入四个空格。
-#     否则，调用display_completions_like_readline函数。
-#
-#     :param event: 包含按键事件信息的对象
-#     """
-#     # 确保event.app.current_buffer和buff.document.text是有效的引用
-#     buffer = event.app.current_buffer
-#     cursor_position = buffer.cursor_position
-#     document_text = buffer.document.text
-#
-#     if cursor_position == 0 or (
-#         cursor_position > 0 and document_text[cursor_position - 1] in ("\n", " ")
-#     ):
-#         buffer.insert_text(" " * 4)  # 假设每个缩进级别为4个空格
-#     else:
-#         # 确保display_completions_like_readline函数在当前上下文中是可用的
-#         display_completions_like_readline(event)
-
-
 def handle_tab(event):
     """
     处理Tab键的按键事件。
@@ -291,6 +268,12 @@ def handle_tab_key(event):
     :param event: 事件对象，包含按键信息
     """
     handle_tab(event)
+
+
+def increment_prompt(input_count):
+    input_count += 1
+    prompt_message = f"In [{input_count}]: "
+    return input_count, prompt_message
 
 
 def main():
@@ -350,17 +333,15 @@ def SinglePython_shell():
             text = session.prompt(prompt_message)
             if text == "exit":
                 sys.exit(0)
-            elif text == "cls" or text == "clear":
+            elif text in ["cls", "clear"]:
                 # 清屏
                 os.system("cls" if os.name == "nt" else "clear")
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 continue
             elif text.startswith("!"):
                 # 执行系统命令
                 os.system(text[1:])
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 continue
             elif text.endswith("?"):
                 # 输出变量信息
@@ -383,26 +364,21 @@ def SinglePython_shell():
                     print(
                         f"{color_print('SinglePython Error:', 'red')} Variable not found"
                     )
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 continue
-            # 输出变量值
             elif text in globals() or text in locals():
                 print(f"{color_print(f'Out[{input_count}]:', 'blue')} {eval(text)}")
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 continue
             elif ".py" in text[-4:]:
                 text = str(text).replace('"', "")
                 optreadfile_exec(text)
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 continue
             # 添加代码到缓冲区
             buffered_code.append(text)
             if is_assignment_statement(buffered_code[0]):
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 exec(buffered_code[0])
                 continue
             # 检查代码是否完整
@@ -416,15 +392,14 @@ def SinglePython_shell():
                 or "import" in text
             ):
                 # 执行代码并重置提示符和缓冲区
-                input_count += 1
-                prompt_message = f"In [{input_count}]: "
+                input_count, prompt_message = increment_prompt(input_count)
                 try:
                     exec("\n".join(buffered_code))
                     # print(f"Executed code: {'\n'.join(buffered_code)}")
                     buffered_code.clear()
                 except Exception as e:
                     buffered_code.clear()
-                    print(str(e))
+                    print(e)
                     continue
             else:
                 prompt_message = "   ...:"
@@ -433,8 +408,7 @@ def SinglePython_shell():
             # 中止执行
             buffered_code.clear()
             print("\nKeyboardInterrupt")
-            input_count += 1
-            prompt_message = f"In [{input_count}]: "
+            input_count, prompt_message = increment_prompt(input_count)
             continue
         except EOFError:
             # 文件结束
