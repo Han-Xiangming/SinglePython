@@ -7,7 +7,6 @@
 </em>
 </p>
 <p align="center">
-
 <img alt="Github stars" src="https://img.shields.io/github/stars/Han-Xiangming/SinglePython.svg"/>
 <img alt="pyver" src="https://img.shields.io/badge/PythonVersion-&gt;3.12-green"/>
 
@@ -27,7 +26,7 @@
 - 显示版本信息：使用 -v 或 --version 选项可以显示 SinglePython 的版本信息。；
 - 支持执行系统命令： 在输入时带有 ! 前缀，可以执行系统命令。例如：!dir ;
 - 支持显示变量信息： 在输入时带有 ? 后缀，可以显示变量信息。例如：a?
-- 集成第三方库。
+- 可集成第三方库。
 
 ## 安装与使用
 
@@ -35,7 +34,8 @@
 
 1. 下载 SinglePython：请在 [SinglePython releases 页面](https://github.com/Han-Xiangming/SinglePython/releases)
    下载适合您操作系统的版本，并解压缩到任意目录。
-2. 运行 SinglePython：在命令行中输入 SinglePython.exe（Windows），然后按下回车键。/ 双击 SinglePython.exe（Windows）即可运行。
+2. 运行 SinglePython：在命令行中输入 SinglePython-0.xx-Windows.exe，然后按下回车键。/ 双击
+   SinglePython-0.xx-Windows.exe即可运行。
 
 ## 构建
 
