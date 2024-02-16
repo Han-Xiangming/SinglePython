@@ -1,1 +1,4 @@
 pyinstaller
+pygments
+prompt_toolkit
+colorama
