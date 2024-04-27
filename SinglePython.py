@@ -23,9 +23,10 @@ from pygments.lexers import PythonLexer
 CLEAR_COMMAND = "cls" if os.name == "nt" else "clear"
 IMPORT_CHECK = "import"
 EMPTY_LINE = ""
-
+global_variable_cache = {}
+multiline_comment = False
 SinglePythonInfo = {
-    "version": 0.81,  # 版本号
+    "version": 0.83,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
@@ -111,8 +112,12 @@ def get_builtin_names_and_keywords():
         # 获取所有关键字
         keywords = list(keyword.kwlist)
 
-        # 返回内置函数和关键字的列表
-        return builtin_names + keywords
+        # 获取当前作用域内的全局变量和局部变量名
+        global_vars = list(globals().keys())
+        local_vars = list(locals().keys())
+
+        # 返回合并后的补全列表
+        return builtin_names + keywords + global_vars + local_vars
     except Exception as e:
         # 在发生异常时打印错误信息并返回空列表
         # 实际应用中，可能需要更复杂的错误处理逻辑
@@ -247,6 +252,7 @@ def increment_prompt(input_count):
 
 # 写一个函数判断传入的代码文本中是否含有需要进入多行输入模式的关键词
 def check_multiline_keywords(code):
+    global multiline_comment
     """
     检查给定的代码中是否包含需要进入多行输入模式的关键词。
 
@@ -254,6 +260,7 @@ def check_multiline_keywords(code):
     :return: 如果包含需要进入多行输入模式的关键词则返回True，否则返回False
     """
     if code == "":
+        multiline_comment = False
         return False
     # try:
     #     parsed = ast.parse(code)
@@ -262,6 +269,7 @@ def check_multiline_keywords(code):
     multiline_keywords = ["if", "elif", "else", "for", "while", "def", "class"]
     for c_keyword in multiline_keywords:
         if code.startswith(c_keyword) and code.endswith(":"):
+            multiline_comment = True
             return True
     return False
 
@@ -322,8 +330,7 @@ def SinglePython_shell():
         处理用户输入，执行系统命令、输出变量信息、执行Python代码等。
 
         """
-    ...
-
+    global completer, multiline_comment
     # 显示欢迎文本
     show_startup_info()
     # 创建一个PromptSession实例并配置历史记录、自动补全（包括WordCompleter）、语法高亮等
@@ -397,14 +404,17 @@ def SinglePython_shell():
 
             # 添加代码到缓冲区
             buffered_code.append(text)
-            if check_multiline_keywords(buffered_code[-1]):
+            check_multiline_keywords(buffered_code[-1])
+            if multiline_comment:
                 prompt_message = "   ...:"
             else:
                 input_count, prompt_message = increment_prompt(input_count)
                 try:
                     exec("\n".join(buffered_code))
+                    completer = WordCompleter(get_builtin_names_and_keywords(), ignore_case=True)
                     # print(f"Executed code: {'\n'.join(buffered_code)}")
                     buffered_code.clear()
+                    multiline_comment = False
                 except Exception as e:
                     buffered_code.clear()
                     print(color_print(e, 'red'))
