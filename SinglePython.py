@@ -1,10 +1,10 @@
-import ast
 import builtins
 import ctypes
 import keyword
 import os
 import platform
 import sys
+import traceback
 from argparse import ArgumentParser
 
 from colorama import Fore, Style, init
@@ -25,7 +25,7 @@ IMPORT_CHECK = "import"
 EMPTY_LINE = ""
 
 SinglePythonInfo = {
-    "version": 0.78,  # 版本号
+    "version": 0.81,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
@@ -99,13 +99,25 @@ class SinglePythonwin:
 
 # 生成包含所有内置函数和关键字的列表
 def get_builtin_names_and_keywords():
-    # 获取所有内置函数和关键字的名称
-    builtin_names = [name for name in dir(
-        builtins) if not name.startswith("__")]
-    # 获取所有关键字
-    keywords = list(keyword.kwlist)
-    # 返回内置函数和关键字的列表
-    return builtin_names + keywords
+    """
+    获取所有内置函数和关键字的名称，并将它们合并到一个列表中返回。
+
+    :return: 包含所有内置函数名称和关键字的列表
+    """
+    try:
+        # 获取所有内置函数名称
+        builtin_names = [name for name in dir(builtins) if not name.startswith("__")]
+
+        # 获取所有关键字
+        keywords = list(keyword.kwlist)
+
+        # 返回内置函数和关键字的列表
+        return builtin_names + keywords
+    except Exception as e:
+        # 在发生异常时打印错误信息并返回空列表
+        # 实际应用中，可能需要更复杂的错误处理逻辑
+        print(color_print(f"获取内置名称和关键字时发生错误: {e}", "red"))
+        return []
 
 
 # 创建一个词补全器对象
@@ -176,73 +188,6 @@ def show_startup_info():
     print(color_print(welcome_message, "cyan"))
 
 
-def is_valid_python_code(code):
-    """
-        检查给定的代码是否是有效的Python代码。
-
-        Args:
-            code (str): 要检查的Python代码字符串
-
-        Returns:
-            bool: 如果代码是有效的Python代码则返回True，否则返回False
-        """
-    try:
-        # 使用ast模块解析代码，mode="eval"表示以eval模式解析
-        # 返回值为一个AST对象，通过判断AST对象的body属性是否为None来判断代码是否有效
-        return ast.parse(code, mode="eval").body is not None
-    except SyntaxError:
-        # 打印异常信息，有助于调试和错误追踪
-        # print(f"SyntaxError: {e}")
-        return False
-
-
-def are_brackets_complete(code):
-    """
-        检查给定的代码中的括号是否完整。
-
-        :param code: 要检查的Python代码字符串
-        :return: 如果所有括号都已正确闭合则返回True，否则返回False
-        """
-    bracket_map = {")": "(", "]": "[", "}": "{"}
-    opening_brackets = set(bracket_map.values())
-    stack = []
-
-    return all(
-        (stack.append(char) if char in opening_brackets else
-         stack and stack.pop() == bracket_map[char])
-        for char in code if char in opening_brackets or char in bracket_map
-    ) and not stack
-
-
-def is_assignment_statement(code):
-    """
-        判断给定的代码片段是否为赋值语句。
-
-        Args:
-            code (str): 要检查的Python代码字符串
-
-        Returns:
-            bool: 如果是赋值语句则返回True，否则返回False
-
-        Raises:
-            None
-
-        Examples:
-            None
-        """
-    if code == "":
-        return False
-    try:
-        # 解析代码片段
-        parsed = ast.parse(code)
-
-        # 检查根节点是否为赋值节点
-        return isinstance(parsed.body[0], ast.Assign)
-    except SyntaxError:
-        # 如果存在语法错误，则不是有效的赋值语句
-        return False
-
-
 def handle_tab(event):
     """
         处理Tab键的按键事件。
@@ -275,6 +220,22 @@ def handle_tab_key(event):
     handle_tab(event)
 
 
+# 添加Ctrl+C退出功能
+@bindings.add("c-c")
+def handle_ctrl_c():
+    """
+    处理Ctrl+C按键事件，优雅地退出程序。
+
+    参数:
+    - event: 触发此函数的事件对象，具体类型和属性取决于事件绑定库。
+
+    返回值:
+    - 无
+    """
+    print("\nExiting gracefully on Ctrl+C...")
+    sys.exit(0)
+
+
 def increment_prompt(input_count):
     """
         对输入的计数进行加一操作，并返回更新后的计数和提示信息。
@@ -282,6 +243,27 @@ def increment_prompt(input_count):
     input_count += 1  # 将输入的计数值增加1
     prompt_message = f"In [{input_count}]: "  # 根据更新后的计数值生成提示信息
     return input_count, prompt_message  # 返回更新后的计数和提示信息
+
+
+# 写一个函数判断传入的代码文本中是否含有需要进入多行输入模式的关键词
+def check_multiline_keywords(code):
+    """
+    检查给定的代码中是否包含需要进入多行输入模式的关键词。
+
+    :param code: 要检查的Python代码字符串
+    :return: 如果包含需要进入多行输入模式的关键词则返回True，否则返回False
+    """
+    if code == "":
+        return False
+    # try:
+    #     parsed = ast.parse(code)
+    # except SyntaxError:
+    #     return False
+    multiline_keywords = ["if", "elif", "else", "for", "while", "def", "class"]
+    for c_keyword in multiline_keywords:
+        if code.startswith(c_keyword) and code.endswith(":"):
+            return True
+    return False
 
 
 def main():
@@ -311,23 +293,28 @@ def main():
         help="Show version information")
     # 解析命令行参数
     args = parser.parse_args()
-    # 如果指定了文件参数
-    if args.file:
-        # 执行指定文件中的Python代码
-        optreadfile_exec(args.file)
-        # 如果指定了交互模式参数
-        if args.interactive:
+    try:
+        # 如果指定了文件参数
+        if args.file:
+            # 执行指定文件中的Python代码
+            optreadfile_exec(args.file)
+            # 如果指定了交互模式参数
+            if args.interactive:
+                # 进入交互模式
+                SinglePython_shell()
+            else:
+                # 退出程序
+                sys.exit(0)
+        else:
             # 进入交互模式
             SinglePython_shell()
-        else:
-            # 退出程序
-            sys.exit(0)
-    else:
-        # 进入交互模式
-        SinglePython_shell()
+    except Exception as e:
+        traceback.print_exc()
+        print(f"An error occurred: {e}")
+        sys.exit(1)
 
 
-def SinglePython_shell():  # sourcery skip: low-code-quality
+def SinglePython_shell():
     """
         创建一个交互式 Python 命令行界面。
 
@@ -407,17 +394,12 @@ def SinglePython_shell():  # sourcery skip: low-code-quality
                 optreadfile_exec(text)
                 input_count, prompt_message = increment_prompt(input_count)
                 continue
+
             # 添加代码到缓冲区
             buffered_code.append(text)
-            if is_assignment_statement(buffered_code[0]):
-                input_count, prompt_message = increment_prompt(input_count)
-                exec(buffered_code[0])
-                continue
-            # 检查代码是否完整
-            if ((is_valid_python_code("".join(buffered_code)) and are_brackets_complete(
-                    "".join(buffered_code))) or is_assignment_statement(
-                buffered_code[0]) or EMPTY_LINE in buffered_code or IMPORT_CHECK in buffered_code[0]):
-                # 执行代码并重置提示符和缓冲区
+            if check_multiline_keywords(buffered_code[-1]):
+                prompt_message = "   ...:"
+            else:
                 input_count, prompt_message = increment_prompt(input_count)
                 try:
                     exec("\n".join(buffered_code))
@@ -425,10 +407,8 @@ def SinglePython_shell():  # sourcery skip: low-code-quality
                     buffered_code.clear()
                 except Exception as e:
                     buffered_code.clear()
-                    print(e)
+                    print(color_print(e, 'red'))
                     continue
-            else:
-                prompt_message = "   ...:"
 
         except KeyboardInterrupt:
             # 中止执行
