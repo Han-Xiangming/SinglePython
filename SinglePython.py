@@ -26,7 +26,7 @@ EMPTY_LINE = ""
 global_variable_cache = {}
 multiline_comment = False
 SinglePythonInfo = {
-    "version": 0.83,  # 版本号
+    "version": 0.85,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
@@ -57,6 +57,26 @@ def color_print(text, color):
         "magenta": Fore.MAGENTA,
         "cyan": Fore.CYAN,
         "white": Fore.WHITE,
+        "black": Fore.BLACK,
+        "reset": Style.RESET_ALL,
+        "bold": Style.BRIGHT,
+        "dim": Style.DIM,
+        "bold_red": Fore.RED + Style.BRIGHT,
+        "bold_green": Fore.GREEN + Style.BRIGHT,
+        "bold_yellow": Fore.YELLOW + Style.BRIGHT,
+        "bold_blue": Fore.BLUE + Style.BRIGHT,
+        "bold_magenta": Fore.MAGENTA + Style.BRIGHT,
+        "bold_cyan": Fore.CYAN + Style.BRIGHT,
+        "bold_white": Fore.WHITE + Style.BRIGHT,
+        "bold_black": Fore.BLACK + Style.BRIGHT,
+        "dim_red": Fore.RED + Style.DIM,
+        "dim_green": Fore.GREEN + Style.DIM,
+        "dim_yellow": Fore.YELLOW + Style.DIM,
+        "dim_blue": Fore.BLUE + Style.DIM,
+        "dim_magenta": Fore.MAGENTA + Style.DIM,
+        "dim_cyan": Fore.CYAN + Style.DIM,
+        "dim_white": Fore.WHITE + Style.DIM,
+        "dim_black": Fore.BLACK + Style.DIM,
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
 
@@ -98,6 +118,27 @@ class SinglePythonwin:
             print(f"{color_print('Error:', 'red')} Failed to set console title. Error: {e}")
 
 
+def init_prompt_session():
+    """初始化 PromptSession 实例"""
+    lexer = PygmentsLexer(PythonLexer)
+    history = InMemoryHistory()
+    style = Style1.from_dict({
+        'completion-menu.completion': 'bg:#008888 #ffffff',
+        'completion-menu.completion.current': 'bg:#00aaaa #000000',
+        'scrollbar.background': 'bg:#88aaaa',
+        'scrollbar.button': 'bg:#222222',
+    })
+    # 添加自定义按键绑定到PromptSession实例
+    return PromptSession(
+        lexer=lexer,
+        auto_suggest=AutoSuggestFromHistory(),
+        completer=completer,
+        history=history,
+        key_bindings=bindings,
+        style=style,
+        complete_while_typing=True,
+        complete_in_thread=True,
+    )
 # 生成包含所有内置函数和关键字的列表
 def get_builtin_names_and_keywords():
     """
@@ -117,7 +158,8 @@ def get_builtin_names_and_keywords():
         local_vars = list(locals().keys())
 
         # 返回合并后的补全列表
-        return builtin_names + keywords + global_vars + local_vars
+        # return builtin_names + keywords + global_vars + local_vars
+        return builtin_names + keywords
     except Exception as e:
         # 在发生异常时打印错误信息并返回空列表
         # 实际应用中，可能需要更复杂的错误处理逻辑
@@ -330,29 +372,11 @@ def SinglePython_shell():
         处理用户输入，执行系统命令、输出变量信息、执行Python代码等。
 
         """
-    global completer, multiline_comment
+    global multiline_comment
     # 显示欢迎文本
     show_startup_info()
-    # 创建一个PromptSession实例并配置历史记录、自动补全（包括WordCompleter）、语法高亮等
-    lexer = PygmentsLexer(PythonLexer)
-    history = InMemoryHistory()
-    style12 = Style1.from_dict({
-        'completion-menu.completion': 'bg:#008888 #ffffff',
-        'completion-menu.completion.current': 'bg:#00aaaa #000000',
-        'scrollbar.background': 'bg:#88aaaa',
-        'scrollbar.button': 'bg:#222222',
-    })
-    # 添加自定义按键绑定到PromptSession实例
-    session = PromptSession(
-        lexer=lexer,
-        auto_suggest=AutoSuggestFromHistory(),
-        completer=completer,
-        history=history,
-        key_bindings=bindings,
-        style=style12,
-        complete_while_typing=True,
-        complete_in_thread=True,
-    )
+    # 初始化 PromptSession
+    session = init_prompt_session()
     # 初始提示符
     input_count = 1
     prompt_message = f"In [{input_count}]: "
@@ -397,8 +421,7 @@ def SinglePython_shell():
                 input_count, prompt_message = increment_prompt(input_count)
                 continue
             elif ".py" in text[-4:]:
-                text = str(text).replace('"', "")
-                optreadfile_exec(text)
+                optreadfile_exec(text.strip('"'))
                 input_count, prompt_message = increment_prompt(input_count)
                 continue
 
@@ -411,13 +434,12 @@ def SinglePython_shell():
                 input_count, prompt_message = increment_prompt(input_count)
                 try:
                     exec("\n".join(buffered_code))
-                    completer = WordCompleter(get_builtin_names_and_keywords(), ignore_case=True)
                     # print(f"Executed code: {'\n'.join(buffered_code)}")
                     buffered_code.clear()
                     multiline_comment = False
                 except Exception as e:
                     buffered_code.clear()
-                    print(color_print(e, 'red'))
+                    print(color_print(f"Error: {e}", 'red'))
                     continue
 
         except KeyboardInterrupt:
