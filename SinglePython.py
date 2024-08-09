@@ -57,26 +57,6 @@ def color_print(text, color):
         "magenta": Fore.MAGENTA,
         "cyan": Fore.CYAN,
         "white": Fore.WHITE,
-        "black": Fore.BLACK,
-        "reset": Style.RESET_ALL,
-        "bold": Style.BRIGHT,
-        "dim": Style.DIM,
-        "bold_red": Fore.RED + Style.BRIGHT,
-        "bold_green": Fore.GREEN + Style.BRIGHT,
-        "bold_yellow": Fore.YELLOW + Style.BRIGHT,
-        "bold_blue": Fore.BLUE + Style.BRIGHT,
-        "bold_magenta": Fore.MAGENTA + Style.BRIGHT,
-        "bold_cyan": Fore.CYAN + Style.BRIGHT,
-        "bold_white": Fore.WHITE + Style.BRIGHT,
-        "bold_black": Fore.BLACK + Style.BRIGHT,
-        "dim_red": Fore.RED + Style.DIM,
-        "dim_green": Fore.GREEN + Style.DIM,
-        "dim_yellow": Fore.YELLOW + Style.DIM,
-        "dim_blue": Fore.BLUE + Style.DIM,
-        "dim_magenta": Fore.MAGENTA + Style.DIM,
-        "dim_cyan": Fore.CYAN + Style.DIM,
-        "dim_white": Fore.WHITE + Style.DIM,
-        "dim_black": Fore.BLACK + Style.DIM,
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
 
@@ -139,6 +119,8 @@ def init_prompt_session():
         complete_while_typing=True,
         complete_in_thread=True,
     )
+
+
 # 生成包含所有内置函数和关键字的列表
 def get_builtin_names_and_keywords():
     """
@@ -235,6 +217,15 @@ def show_startup_info():
     print(color_print(welcome_message, "cyan"))
 
 
+
+
+
+# 添加自定义按键绑定
+bindings = KeyBindings()
+
+
+# 当用户按下Tab键时，调用handle_tab函数处理事件
+@bindings.add(Keys.Tab)
 def handle_tab(event):
     """
         处理Tab键的按键事件。
@@ -250,21 +241,6 @@ def handle_tab(event):
         buffer.insert_text(" " * 4)
     else:
         display_completions_like_readline(event)
-
-
-# 添加自定义按键绑定
-bindings = KeyBindings()
-
-
-# 当用户按下Tab键时，调用handle_tab函数处理事件
-@bindings.add(Keys.Tab)
-def handle_tab_key(event):
-    """
-        处理Tab键的事件。
-
-        :param event: 事件对象，包含按键信息
-        """
-    handle_tab(event)
 
 
 # 添加Ctrl+C退出功能
