@@ -62,7 +62,7 @@ pip install -r .\requirement.txt
 3. 构建 SinglePython
 
  ```bash
- pyinstaller  -y main.spec
+ pyinstaller  -y SinglePython.spec
  ```
 
 ## 程序贡献者
