@@ -26,7 +26,7 @@ EMPTY_LINE = ""
 global_variable_cache = {}
 multiline_comment = False
 SinglePythonInfo = {
-    "version": 0.85,  # 版本号
+    "version": 0.86,  # 版本号
     "libs_warning": 1,  # 库警告
     "releases_version": "official",  # 发布版本号
     "importlibs": "os",  # 导入的库信息
