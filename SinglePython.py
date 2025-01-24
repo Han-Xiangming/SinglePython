@@ -106,13 +106,21 @@ class MyInteractiveInterpreter(code.InteractiveInterpreter):
 class MagicCommandHandler:
     def __init__(self, shell):
         self.shell = shell
+        self.command_handlers = {
+            "%time": self.handle_time_command,
+        }
 
     def handle_magic_command(self, text):
-        command, *args = text.split(maxsplit=1)
-        if command == "%time":
-            self.handle_time_command(args[0] if args else "")
-        else:
-            print(f"{color_print('SinglePython Warning:', 'magenta')} Unknown magic command: {command}")
+        parts = text.split(maxsplit=1)
+        command = parts[0]
+        args = parts[1] if len(parts) > 1 else ""
+
+        handler = self.command_handlers.get(command, self.handle_unknown_command)
+        handler(args)
+
+    @staticmethod
+    def handle_unknown_command(command):
+        print(f"{color_print('SinglePython Warning:', 'magenta')} Unknown magic command: {command}")
 
     def handle_time_command(self, code_to_time):
         if not code_to_time:
