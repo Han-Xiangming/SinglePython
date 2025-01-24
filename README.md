@@ -41,7 +41,7 @@
 
 ### 前提条件
 
-- Python 3.12+
+- Python 3.13+
 - PyInstaller 4.5+
 
 ### 步骤
