@@ -37,10 +37,12 @@ SinglePythonInfo = {
     "importlibs": "os",
 }
 
+
 # 缓存版本信息
 @lru_cache(maxsize=1)
 def get_version():
     return f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}"
+
 
 def show_startup_info(version_info):
     sp_version = f"SinglePython {version_info['version']}-{version_info['releases_version']}"
@@ -48,6 +50,7 @@ def show_startup_info(version_info):
     env_info = f" [Running on {platform.platform()} {platform.version()}]"
     welcome_message = f"{sp_version} (Python Version: {py_version}) {env_info}"
     print(color_print(welcome_message, "cyan"))
+
 
 def color_print(text, color):
     color_dict = {
@@ -61,6 +64,7 @@ def color_print(text, color):
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
 
+
 def execute_code(code_content, filename):
     try:
         if not code_content.strip():
@@ -72,6 +76,7 @@ def execute_code(code_content, filename):
     except Exception as e:
         handle_exception(e, "SinglePython Error")
 
+
 def optreadfile_exec(filename: str) -> None:
     try:
         if not os.path.isfile(filename):
@@ -82,11 +87,11 @@ def optreadfile_exec(filename: str) -> None:
     except Exception as e:
         handle_exception(e, "SinglePython Error")
 
+
 class MyInteractiveInterpreter(code.InteractiveInterpreter):
     def __init__(self):
         super().__init__()
         self.buffer = []
-
 
     def runsource(self, source, filename="<input>", symbol="exec"):
         self.buffer.append(source)
@@ -96,11 +101,14 @@ class MyInteractiveInterpreter(code.InteractiveInterpreter):
             return super().runsource(source, filename, symbol)
         return True
 
+
 class MagicCommandHandler:
     def __init__(self, shell):
         self.shell = shell
         self.command_handlers = {
             "%time": self.handle_time_command,
+            "%who": self.handle_who_command,
+            "%whos": self.handle_whos_command,
         }
 
     def handle_magic_command(self, text):
@@ -145,6 +153,17 @@ class MagicCommandHandler:
             self.shell.increment_prompt()
         finally:
             self.shell.reset_state()
+
+    def handle_who_command(self, args):
+        filtered_locals = {k: v for k, v in self.shell.interpreter.locals.items() if not k.startswith('__')}
+        print(" , ".join(filtered_locals.keys()))
+
+    def handle_whos_command(self, args):
+        filtered_locals = {k: v for k, v in self.shell.interpreter.locals.items() if not k.startswith('__')}
+        for key, value in filtered_locals.items():
+            print(f"{key}: {value}")
+
+
 class SinglePythonShell:
     def __init__(self, version_info):
         self.multiline_comment = False
@@ -161,11 +180,14 @@ class SinglePythonShell:
         lexer = PygmentsLexer(PythonLexer)
         history = InMemoryHistory()
         style = Style1.from_dict({
-            'completion-menu.completion': 'bg:#008888 #ffffff',
-            'completion-menu.completion.current': 'bg:#00aaaa #000000',
-            'scrollbar.background': 'bg:#88aaaa',
-            'scrollbar.button': 'bg:#222222',
-            # **get_style_by_name('monokai').styles,
+            'pygments.keyword': 'bold #ff79c6',
+            'pygments.operator': '#ff79c6',
+            'pygments.punctuation': '#ff79c6',
+            'pygments.name.function': '#50fa7b',
+            'pygments.name.class': 'bold #50fa7b',
+            'pygments.literal.string': '#f1fa8c',
+            'pygments.literal.number': '#bd93f9',
+            'pygments.comment': '#6272a4',
         })
         return PromptSession(
             lexer=lexer,
@@ -250,6 +272,7 @@ class SinglePythonShell:
             return True
         elif text.startswith("%"):
             self.magic_command_handler.handle_magic_command(text)
+            self.reset_state()
             return True
         elif text.strip() == "":
             if self.multiline_comment:
