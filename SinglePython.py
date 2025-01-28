@@ -1,10 +1,12 @@
 import code
+import logging
 import os
 import platform
 import subprocess
 import sys
 import traceback
 from argparse import ArgumentParser
+from functools import lru_cache
 from time import time
 
 from colorama import Fore, Style, init
@@ -17,33 +19,28 @@ from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.styles import Style as Style1
 from pygments.lexers import PythonLexer
 
-# 初始化 colorama
+# 初始化 colorama 和日志
 init()
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # 常量定义
 CLEAR_COMMAND = "cls" if os.name == "nt" else "clear"
 IMPORT_CHECK = "import"
 EMPTY_LINE = ""
-MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}  # 使用集合提高查找效率
+MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 
 # 配置信息
 SinglePythonInfo = {
-    "version": 0.88,
+    "version": 0.89,
     "libs_warning": 1,
     "releases_version": "official",
     "importlibs": "os",
 }
 
 # 缓存版本信息
-_cached_version = None
-
-
+@lru_cache(maxsize=1)
 def get_version():
-    global _cached_version
-    if _cached_version is None:
-        _cached_version = f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}"
-    return _cached_version
-
+    return f"SinglePython {SinglePythonInfo['version']}-{SinglePythonInfo['releases_version']}, By Python {platform.python_version()}"
 
 def show_startup_info(version_info):
     sp_version = f"SinglePython {version_info['version']}-{version_info['releases_version']}"
@@ -51,7 +48,6 @@ def show_startup_info(version_info):
     env_info = f" [Running on {platform.platform()} {platform.version()}]"
     welcome_message = f"{sp_version} (Python Version: {py_version}) {env_info}"
     print(color_print(welcome_message, "cyan"))
-
 
 def color_print(text, color):
     color_dict = {
@@ -65,7 +61,6 @@ def color_print(text, color):
     }
     return f"{color_dict.get(color, '')}{text}{Style.RESET_ALL}"
 
-
 def execute_code(code_content, filename):
     try:
         if not code_content.strip():
@@ -77,7 +72,6 @@ def execute_code(code_content, filename):
     except Exception as e:
         handle_exception(e, "SinglePython Error")
 
-
 def optreadfile_exec(filename: str) -> None:
     try:
         if not os.path.isfile(filename):
@@ -88,11 +82,11 @@ def optreadfile_exec(filename: str) -> None:
     except Exception as e:
         handle_exception(e, "SinglePython Error")
 
-
 class MyInteractiveInterpreter(code.InteractiveInterpreter):
     def __init__(self):
         super().__init__()
         self.buffer = []
+
 
     def runsource(self, source, filename="<input>", symbol="exec"):
         self.buffer.append(source)
@@ -101,7 +95,6 @@ class MyInteractiveInterpreter(code.InteractiveInterpreter):
             self.buffer = []
             return super().runsource(source, filename, symbol)
         return True
-
 
 class MagicCommandHandler:
     def __init__(self, shell):
@@ -152,8 +145,6 @@ class MagicCommandHandler:
             self.shell.increment_prompt()
         finally:
             self.shell.reset_state()
-
-
 class SinglePythonShell:
     def __init__(self, version_info):
         self.multiline_comment = False
@@ -174,6 +165,7 @@ class SinglePythonShell:
             'completion-menu.completion.current': 'bg:#00aaaa #000000',
             'scrollbar.background': 'bg:#88aaaa',
             'scrollbar.button': 'bg:#222222',
+            # **get_style_by_name('monokai').styles,
         })
         return PromptSession(
             lexer=lexer,
@@ -196,6 +188,24 @@ class SinglePythonShell:
         def handle_ctrl_c(event):
             print("\nExiting gracefully on Ctrl+C...")
             sys.exit(0)
+
+        @bindings.add("(")
+        def handle_left_parenthesis(event):
+            buffer = event.app.current_buffer
+            buffer.insert_text("()")
+            buffer.cursor_left()
+
+        @bindings.add("[")
+        def handle_left_bracket(event):
+            buffer = event.app.current_buffer
+            buffer.insert_text("[]")
+            buffer.cursor_left()
+
+        @bindings.add("{")
+        def handle_left_brace(event):
+            buffer = event.app.current_buffer
+            buffer.insert_text("{}")
+            buffer.cursor_left()
 
         return bindings
 
@@ -223,6 +233,7 @@ class SinglePythonShell:
         self.first_line_processed = False
 
     def handle_exception(self, e, message_prefix):
+        # logging.error(f"{message_prefix}: {e}")
         print(f"{color_print(f'{message_prefix}:', 'red')} {e}")
         self.reset_state()
 
@@ -230,11 +241,11 @@ class SinglePythonShell:
         if text == "exit":
             sys.exit(0)
         elif text in ["cls", "clear"]:
-            subprocess.call(CLEAR_COMMAND, shell=True)
+            subprocess.run(CLEAR_COMMAND, shell=True, check=False)
             self.reset_state()
             return True
         elif text.startswith("!"):
-            subprocess.call(text[1:], shell=True)
+            subprocess.run(text[1:], shell=True, check=False)
             self.reset_state()
             return True
         elif text.startswith("%"):
@@ -249,6 +260,10 @@ class SinglePythonShell:
                 except Exception as e:
                     self.handle_exception(e, "Error")
                 return True
+        elif text.strip() in self.interpreter.locals:
+            print(f"Out[{self.input_count}]: {self.interpreter.locals[text.strip()]}\n")
+            self.reset_state()
+            return True
         self.buffered_code.append(text)
         if not self.first_line_processed:
             self.check_multiline_keywords(text)
