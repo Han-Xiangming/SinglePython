@@ -13,7 +13,9 @@ from pygments.lexers import PythonLexer
 
 from interpreter import MyInteractiveInterpreter
 from magic_commands import MagicCommandHandler
-from utils import color_print, show_startup_info, MULTILINE_KEYWORDS
+from utils import color_print, show_startup_info
+
+MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 
 
 class SinglePythonShell:

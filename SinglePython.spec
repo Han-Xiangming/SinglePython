@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-ver = '0.90'
+ver = '0.92'
 
 a = Analysis(
     ['main.py'],
@@ -32,7 +32,7 @@ exe = EXE(
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
+    upx=tRUE,
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
