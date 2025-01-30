@@ -1,11 +1,14 @@
 import code
+import io
 import logging
+import math
 import os
 import platform
 import subprocess
 import sys
 import traceback
 from argparse import ArgumentParser
+from contextlib import redirect_stdout, redirect_stderr
 from functools import lru_cache
 from time import time
 
@@ -18,6 +21,7 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.styles import Style as Style1
 from pygments.lexers import PythonLexer
+from tqdm import tqdm
 
 # 初始化 colorama 和日志
 init()
@@ -31,7 +35,7 @@ MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 
 # 配置信息
 SinglePythonInfo = {
-    "version": 0.89,
+    "version": 0.90,
     "libs_warning": 1,
     "releases_version": "official",
     "importlibs": "os",
@@ -102,11 +106,16 @@ class MyInteractiveInterpreter(code.InteractiveInterpreter):
         return True
 
 
+import re
+from timeit import Timer
+
+
 class MagicCommandHandler:
     def __init__(self, shell):
         self.shell = shell
         self.command_handlers = {
             "%time": self.handle_time_command,
+            "%timeit": self.handle_timeit_command,
             "%who": self.handle_who_command,
             "%whos": self.handle_whos_command,
         }
@@ -153,6 +162,90 @@ class MagicCommandHandler:
             self.shell.increment_prompt()
         finally:
             self.shell.reset_state()
+
+    def handle_timeit_command(self, code_to_time):
+        if not code_to_time:
+            print(f"{color_print('SinglePython Warning:', 'magenta')} No code provided for %timeit")
+            return
+        match = re.match(r"(-n\s+(\d+))?\s*(-r\s+(\d+))?\s*(.*)", code_to_time)
+        if not match:
+            print(
+                f"{color_print('SinglePython Warning:', 'magenta')} Invalid syntax for %timeit. Use: %timeit [-n <number>] [-r <repeats>] <code>")
+            return
+
+        n = int(match.group(2)) if match.group(2) else 1000000
+
+        r = int(match.group(4)) if match.group(4) else 7
+
+        code_to_time = match.group(5).strip()
+
+        if self.shell.multiline_comment:
+            self.shell.buffered_code.append(code_to_time)
+            if self.shell.check_multiline_end():
+                self.execute_timeit_code(n, r)
+        else:
+            self.execute_timeit_code(n, r, code_to_time)
+
+    @staticmethod
+    def _format_time(timespan, precision=3):
+        """Formats the timespan in a human readable form"""
+
+        if timespan >= 60.0:
+            parts = [("d", 60 * 60 * 24), ("h", 60 * 60), ("min", 60), ("s", 1)]
+            time_parts: list[str] = []
+            leftover = timespan
+            for suffix, length in parts:
+                value = int(leftover / length)
+                if value > 0:
+                    leftover = leftover % length
+                    time_parts.append(u'%s%s' % (str(value), suffix))
+                if leftover < 1:
+                    break
+            return " ".join(time_parts)
+        units = ["s", "ms", "us", "ns"]
+        if hasattr(sys.stdout, "encoding") and sys.stdout.encoding:
+            try:
+                "μ".encode(sys.stdout.encoding)
+                units = ["s", "ms", "μs", "ns"]
+            except:
+                pass
+        scaling = [1, 1e3, 1e6, 1e9]
+
+        if timespan > 0.0:
+            order = min(-int(math.floor(math.log10(timespan)) // 3), 3)
+        else:
+            order = 3
+        return "%.*g %s" % (precision, timespan * scaling[order], units[order])
+
+    def execute_timeit_code(self, n, r, code_to_time=None):
+        if code_to_time is None:
+            code_to_time = "\n".join(self.shell.buffered_code)
+            self.shell.buffered_code.clear()
+
+        try:
+
+            tqdm_file = open(sys.__stdout__.fileno(), mode='w', encoding='utf-8')
+
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                timer = Timer(stmt=code_to_time, globals=self.shell.interpreter.locals)
+                times = []
+                for _ in tqdm(range(r), desc="Timeit runs", unit="run", file=tqdm_file):
+                    times.append(timer.timeit(number=n) / n)
+
+                best = self._format_time(min(times))
+                avg = self._format_time(sum(times) / len(times))
+                worst = self._format_time(max(times))
+
+            print(f"{color_print(f'Best of {r} runs, {n} loops each:', 'cyan')}")
+            print(f"  Best: {best} seconds per loop")
+            print(f"  Average: {avg} seconds per loop")
+            print(f"  Worst: {worst} seconds per loop")
+
+            tqdm_file.close()
+        except Exception as e:
+            self.shell.buffered_code.clear()
+            self.shell.handle_exception(e, "Error")
+            self.shell.increment_prompt()
 
     def handle_who_command(self, args):
         filtered_locals = {k: v for k, v in self.shell.interpreter.locals.items() if not k.startswith('__')}
