@@ -11,9 +11,9 @@ from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.styles import Style as Style1
 from pygments.lexers import PythonLexer
 
-from interpreter import MyInteractiveInterpreter
-from magic_commands import MagicCommandHandler
-from utils import color_print, show_startup_info
+from Core.interpreter import MyInteractiveInterpreter
+from Core.magic_commands import MagicCommandHandler
+from Core.utils import color_print, show_startup_info
 
 MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 

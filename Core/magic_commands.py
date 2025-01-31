@@ -8,7 +8,7 @@ from timeit import Timer
 
 from tqdm import tqdm
 
-from utils import color_print
+from Core.utils import color_print
 
 
 class MagicCommandHandler:

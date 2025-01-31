@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
 
-from config import SinglePythonInfo
-from shell import SinglePythonShell
-from utils import execute_code_from_file
-from utils import get_version
+from Core.config import SinglePythonInfo
+from Core.shell import SinglePythonShell
+from Core.utils import execute_code_from_file
+from Core.utils import get_version
 
 
 def main():

@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from colorama import Fore, Style, init
 
-from config import SinglePythonInfo
+from Core.config import SinglePythonInfo
 
 init()
 
