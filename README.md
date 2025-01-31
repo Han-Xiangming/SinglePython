@@ -8,7 +8,7 @@
 </p>
 <p align="center">
 <img alt="Github stars" src="https://img.shields.io/github/stars/Han-Xiangming/SinglePython.svg"/>
-<img alt="pyver" src="https://img.shields.io/badge/PythonVersion-&gt;3.12-green"/>
+<img alt="pyver" src="https://img.shields.io/badge/PythonVersion-&gt;3.13-green"/>
 
 ### BiliBili: https://space.bilibili.com/669743441
 
@@ -16,7 +16,7 @@
 
 <div align=center><img src="./docs/screenshot.png"></div>
 
-## 程序说明
+## 程序说明(目前已采用分布模块式开发)
 
 该脚本提供了以下功能：
 
@@ -25,7 +25,6 @@
 - 显示帮助信息：使用 -h 或 --help 选项可以显示帮助信息，了解其他可用的选项和用法。；
 - 显示版本信息：使用 -v 或 --version 选项可以显示 SinglePython 的版本信息。；
 - 支持执行系统命令： 在输入时带有 ! 前缀，可以执行系统命令。例如：!dir ;
-- 支持显示变量信息： 在输入时带有 ? 后缀，可以显示变量信息。例如：a?
 - 可集成第三方库。
 
 ## 安装与使用
@@ -34,8 +33,8 @@
 
 1. 下载 SinglePython：请在 [SinglePython releases 页面](https://github.com/Han-Xiangming/SinglePython/releases)
    下载适合您操作系统的版本，并解压缩到任意目录。
-2. 运行 SinglePython：在命令行中输入 SinglePython-0.xx-Windows.exe，然后按下回车键。/ 双击
-   SinglePython-0.xx-Windows.exe即可运行。
+2. 运行 SinglePython：在命令行中输入 SinglePython-x.xx-Windows.exe，然后按下回车键。/ 双击
+   SinglePython-x.xx-Windows.exe即可运行。
 
 ## 构建
 
