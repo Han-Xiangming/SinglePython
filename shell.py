@@ -17,13 +17,12 @@ from utils import color_print, show_startup_info
 
 MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 
-
 class SinglePythonShell:
     def __init__(self, version_info=None):
+        self.version_info = version_info
         self.multiline_comment = False
         self.buffered_code = []
         self.input_count = 1
-        self.version_info = version_info
         self.session = self.init_prompt_session()
         self.prompt_message = f"In [{self.input_count}]: "
         self.interpreter = MyInteractiveInterpreter()
@@ -63,7 +62,6 @@ class SinglePythonShell:
         @bindings.add("c-c")
         def handle_ctrl_c(event):
             print("\nExiting gracefully on Ctrl+C...")
-            import sys
             sys.exit(0)
 
         @bindings.add("(")

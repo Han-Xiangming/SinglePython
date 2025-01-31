@@ -38,12 +38,7 @@ class MagicCommandHandler:
             print(f"{color_print('SinglePython Warning:', 'magenta')} No code provided for %time")
             return
 
-        if self.shell.multiline_comment:
-            self.shell.buffered_code.append(code_to_time)
-            if self.shell.check_multiline_end():
-                self.execute_timed_code()
-        else:
-            self.execute_timed_code(code_to_time)
+        self.execute_timed_code(code_to_time)
 
     def execute_timed_code(self, code_to_time=None):
         if code_to_time is None:
@@ -68,6 +63,7 @@ class MagicCommandHandler:
         if not code_to_time:
             print(f"{color_print('SinglePython Warning:', 'magenta')} No code provided for %timeit")
             return
+
         match = re.match(r"(-n\s+(\d+))?\s*(-r\s+(\d+))?\s*(.*)", code_to_time)
         if not match:
             print(
@@ -75,25 +71,17 @@ class MagicCommandHandler:
             return
 
         n = int(match.group(2)) if match.group(2) else 1000000
-
         r = int(match.group(4)) if match.group(4) else 7
-
         code_to_time = match.group(5).strip()
 
-        if self.shell.multiline_comment:
-            self.shell.buffered_code.append(code_to_time)
-            if self.shell.check_multiline_end():
-                self.execute_timeit_code(n, r)
-        else:
-            self.execute_timeit_code(n, r, code_to_time)
+        self.execute_timeit_code(n, r, code_to_time)
 
     @staticmethod
     def _format_time(timespan, precision=3):
         """Formats the timespan in a human readable form"""
-
         if timespan >= 60.0:
             parts = [("d", 60 * 60 * 24), ("h", 60 * 60), ("min", 60), ("s", 1)]
-            time_parts: list[str] = []
+            time_parts = []
             leftover = timespan
             for suffix, length in parts:
                 value = int(leftover / length)
@@ -124,7 +112,6 @@ class MagicCommandHandler:
             self.shell.buffered_code.clear()
 
         try:
-
             tqdm_file = open(sys.__stdout__.fileno(), mode='w', encoding='utf-8')
 
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):

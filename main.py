@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 
 from config import SinglePythonInfo
 from shell import SinglePythonShell
+from utils import execute_code_from_file
 from utils import get_version
-from utils import optreadfile_exec
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
 
     try:
         if args.file:
-            optreadfile_exec(args.file)
+            execute_code_from_file(args.file)
             if args.interactive:
                 shell = SinglePythonShell(SinglePythonInfo)
                 shell.run()
@@ -26,8 +26,8 @@ def main():
             shell = SinglePythonShell(SinglePythonInfo)
             shell.run()
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        from rich import traceback
+        traceback.install(show_locals=True)
         print(f"An error occurred: {e}")
         sys.exit(1)
 
