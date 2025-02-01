@@ -1,9 +1,12 @@
+import sys
+import time
 from argparse import ArgumentParser
+
+from tqdm import tqdm  # 引入tqdm库
 
 from Core.config import SinglePythonInfo
 from Core.shell import SinglePythonShell
-from Core.utils import execute_code_from_file
-from Core.utils import get_version
+from Core.utils import execute_code_from_file, get_version
 
 
 def main():
@@ -13,6 +16,12 @@ def main():
                         help="Enter interactive mode after executing a file.")
     parser.add_argument("-v", "--version", action="version", version=get_version(), help="Show version information")
     args = parser.parse_args()
+
+    print("Initializing...")
+    for _ in tqdm(range(100), desc="Initialization", ncols=75):
+        time.sleep(0.005)
+    print("Initialization complete.")
+    sys.stdout.write("\033[F\033[F\033[F")
 
     try:
         if args.file:
@@ -26,8 +35,6 @@ def main():
             shell = SinglePythonShell(SinglePythonInfo)
             shell.run()
     except Exception as e:
-        from rich import traceback
-        traceback.install(show_locals=True)
         print(f"An error occurred: {e}")
         sys.exit(1)
 
