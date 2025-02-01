@@ -16,7 +16,7 @@
 
 <div align=center><img src="./docs/screenshot.png"></div>
 
-## 程序说明(目前已采用分布模块式开发)
+## 程序说明(目前已采用分文件开发)
 
 该脚本提供了以下功能：
 
