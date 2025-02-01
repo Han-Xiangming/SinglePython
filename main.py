@@ -12,7 +12,7 @@ from Core.utils import execute_code_from_file, get_version
 def init():
     print("Initializing...")
     for _ in tqdm(range(100), desc="Initialization", ncols=75):
-        time.sleep(0.005)
+        time.sleep(0.001)
     print("Initialization complete.")
     sys.stdout.write("\033[F\033[F\033[F")
 
