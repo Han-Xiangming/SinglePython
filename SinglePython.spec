@@ -1,4 +1,4 @@
-ver = '0.93'
+ver = '0.94'
 
 a = Analysis(
     ['main.py'],

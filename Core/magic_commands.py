@@ -11,6 +11,48 @@ from tqdm import tqdm
 from Core.utils import color_print
 
 
+class TimeFormatter:
+    @staticmethod
+    def format_time(timespan, precision=3):
+        if timespan < 0:
+            return "-" + TimeFormatter._format_positive_time(abs(timespan), precision)
+        elif timespan == 0:
+            return "0s"
+        else:
+            return TimeFormatter._format_positive_time(timespan, precision)
+
+    @staticmethod
+    def _format_positive_time(timespan, precision):
+        if timespan >= 60.0:
+            parts = [("d", 60 * 60 * 24), ("h", 60 * 60), ("min", 60), ("s", 1)]
+            time_parts = []
+            leftover = timespan
+            for suffix, length in parts:
+                value = int(leftover / length)
+                if value > 0:
+                    leftover = leftover % length
+                    time_parts.append(f'{value}{suffix}')
+                if math.isclose(leftover, 0, abs_tol=1e-9):
+                    break
+            return " ".join(time_parts)
+
+        units = ["s", "ms", "us", "ns"]
+        try:
+            if hasattr(sys.stdout, "encoding") and sys.stdout.encoding:
+                "μ".encode(sys.stdout.encoding)
+                units = ["s", "ms", "μs", "ns"]
+        except (AttributeError, LookupError):
+            pass
+
+        scaling = [1, 1e3, 1e6, 1e9]
+
+        if timespan > 0.0:
+            order = min(-int(math.floor(math.log10(timespan)) // 3), 3)
+        else:
+            order = 3
+        return f"{timespan * scaling[order]:.{precision}g} {units[order]}"
+
+
 class MagicCommandHandler:
     def __init__(self, shell):
         self.shell = shell
@@ -76,36 +118,6 @@ class MagicCommandHandler:
 
         self.execute_timeit_code(n, r, code_to_time)
 
-    @staticmethod
-    def _format_time(timespan, precision=3):
-        """Formats the timespan in a human readable form"""
-        if timespan >= 60.0:
-            parts = [("d", 60 * 60 * 24), ("h", 60 * 60), ("min", 60), ("s", 1)]
-            time_parts = []
-            leftover = timespan
-            for suffix, length in parts:
-                value = int(leftover / length)
-                if value > 0:
-                    leftover = leftover % length
-                    time_parts.append(u'%s%s' % (str(value), suffix))
-                if leftover < 1:
-                    break
-            return " ".join(time_parts)
-        units = ["s", "ms", "us", "ns"]
-        if hasattr(sys.stdout, "encoding") and sys.stdout.encoding:
-            try:
-                "μ".encode(sys.stdout.encoding)
-                units = ["s", "ms", "μs", "ns"]
-            except:
-                pass
-        scaling = [1, 1e3, 1e6, 1e9]
-
-        if timespan > 0.0:
-            order = min(-int(math.floor(math.log10(timespan)) // 3), 3)
-        else:
-            order = 3
-        return "%.*g %s" % (precision, timespan * scaling[order], units[order])
-
     def execute_timeit_code(self, n, r, code_to_time=None):
         if code_to_time is None:
             code_to_time = "\n".join(self.shell.buffered_code)
@@ -120,9 +132,9 @@ class MagicCommandHandler:
                 for _ in tqdm(range(r), desc="Timeit runs", unit="run", file=tqdm_file):
                     times.append(timer.timeit(number=n) / n)
 
-                best = self._format_time(min(times))
-                avg = self._format_time(sum(times) / len(times))
-                worst = self._format_time(max(times))
+                best = TimeFormatter.format_time(min(times))
+                avg = TimeFormatter.format_time(sum(times) / len(times))
+                worst = TimeFormatter.format_time(max(times))
 
             print(f"{color_print(f'Best of {r} runs, {n} loops each:', 'cyan')}")
             print(f"  Best: {best}  per loop")
