@@ -17,6 +17,7 @@ from Core.utils import color_print, show_startup_info
 
 MULTILINE_KEYWORDS = {"if", "elif", "else", "for", "while", "def", "class"}
 
+
 class SinglePythonShell:
     def __init__(self, version_info=None):
         self.version_info = version_info

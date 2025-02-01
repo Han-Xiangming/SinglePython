@@ -16,6 +16,7 @@ def init():
     print("Initialization complete.")
     sys.stdout.write("\033[F\033[F\033[F")
 
+
 def main():
     parser = ArgumentParser(description="Interactive Python Shell with additional features.")
     parser.add_argument("file", nargs='?', type=str, help="Execute Python code from the specified file")
