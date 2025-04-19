@@ -40,7 +40,7 @@
 
 ### 前提条件
 
-- Python 3.13+
+- Python 3.12+
 - PyInstaller 4.5+
 
 ### 步骤
@@ -64,12 +64,12 @@ pip install -r .\requirement.txt
  pyinstaller  -y SinglePython.spec
  ```
 
-## 程序贡献者
+<!-- ## 程序贡献者
 
 SinglePython 项目由多位贡献者共同打造，包括：
 
 - Han-Xiangming：项目创建者和维护者。
-- 更多贡献者：请参阅 [contributors](https://github.com/Han-Xiangming/SinglePython/graphs/contributors) 页面。
+- 更多贡献者：请参阅 [contributors](https://github.com/Han-Xiangming/SinglePython/graphs/contributors) 页面。 -->
 
 ## 致谢
 

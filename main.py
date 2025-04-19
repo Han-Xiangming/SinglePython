@@ -1,6 +1,10 @@
+# main.py
+
 import sys
 import time
+import traceback
 from argparse import ArgumentParser
+from concurrent.futures import ThreadPoolExecutor
 
 from tqdm import tqdm
 
@@ -10,14 +14,21 @@ from Core.utils import execute_code_from_file, get_version
 
 
 def init():
+    """
+    初始化进度条显示。
+    """
     print("Initializing...")
-    for _ in tqdm(range(100), desc="Initialization", ncols=75):
-        time.sleep(0.001)
+    for _ in tqdm(range(100), desc="Initialization", ncols=75, leave=False):
+        time.sleep(0.001)  # 更快的进度条
     print("Initialization complete.")
-    sys.stdout.write("\033[F\033[F\033[F")
+    sys.stdout.write("\x1b[A" * 3)
+    sys.stdout.flush()
 
 
 def main():
+    """
+    主程序入口，解析命令行参数，执行文件或进入交互式 shell。
+    """
     parser = ArgumentParser(description="Interactive Python Shell with additional features.")
     parser.add_argument("file", nargs='?', type=str, help="Execute Python code from the specified file")
     parser.add_argument("-i", "--interactive", action="store_true",
@@ -27,7 +38,7 @@ def main():
 
     try:
         if args.file:
-            execute_code_from_file(args.file)
+            execute_code_from_file(args.file)  # 直接调用，无需线程池
             if args.interactive:
                 shell = SinglePythonShell(SinglePythonInfo)
                 init()
@@ -40,6 +51,7 @@ def main():
             shell.run()
     except Exception as e:
         print(f"An error occurred: {e}")
+        traceback.print_exc()
         sys.exit(1)
 
 
